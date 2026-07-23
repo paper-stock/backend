@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.security.auth.jwt.JwtAuthenticationFilter;
 
 @Configuration
