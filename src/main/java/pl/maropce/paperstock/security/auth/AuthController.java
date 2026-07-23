@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal;
+package pl.maropce.paperstock.security.auth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.maropce.paperstock.appUser.AppUserDTO;
-import pl.maropce.paperstock.auth.AppUserDetails;
-import pl.maropce.paperstock.auth.internal.dto.LoginRequest;
-import pl.maropce.paperstock.auth.internal.dto.LoginResponse;
-import pl.maropce.paperstock.auth.internal.dto.RefreshRequest;
-import pl.maropce.paperstock.auth.internal.dto.RegisterUserRequest;
-import pl.maropce.paperstock.auth.internal.jwt.refreshToken.RefreshTokenService;
+import pl.maropce.paperstock.security.AppUserDetails;
+import pl.maropce.paperstock.security.auth.dto.LoginRequest;
+import pl.maropce.paperstock.security.auth.dto.LoginResponse;
+import pl.maropce.paperstock.security.auth.dto.RefreshRequest;
+import pl.maropce.paperstock.security.auth.dto.RegisterUserRequest;
+import pl.maropce.paperstock.security.auth.jwt.refreshToken.RefreshTokenService;
 
 @RestController
 @RequestMapping("/api/auth")

@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal.jwt.refreshToken;
+package pl.maropce.paperstock.security.auth.jwt.refreshToken;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal.dto;
+package pl.maropce.paperstock.security.auth.dto;
 
 public record RefreshRequest(
         String refreshToken

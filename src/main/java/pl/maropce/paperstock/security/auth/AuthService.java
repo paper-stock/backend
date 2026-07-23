@@ -1,8 +1,7 @@
-package pl.maropce.paperstock.auth.internal;
+package pl.maropce.paperstock.security.auth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,13 +10,12 @@ import org.springframework.stereotype.Service;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
-import pl.maropce.paperstock.auth.AppUserDetails;
-import pl.maropce.paperstock.auth.AppUserRegisteredEvent;
-import pl.maropce.paperstock.auth.internal.dto.LoginRequest;
-import pl.maropce.paperstock.auth.internal.dto.LoginResponse;
-import pl.maropce.paperstock.auth.internal.dto.RegisterUserRequest;
-import pl.maropce.paperstock.auth.internal.jwt.JwtUtil;
-import pl.maropce.paperstock.auth.internal.jwt.refreshToken.RefreshTokenService;
+import pl.maropce.paperstock.security.AppUserDetails;
+import pl.maropce.paperstock.security.auth.dto.LoginRequest;
+import pl.maropce.paperstock.security.auth.dto.LoginResponse;
+import pl.maropce.paperstock.security.auth.dto.RegisterUserRequest;
+import pl.maropce.paperstock.security.auth.jwt.JwtUtil;
+import pl.maropce.paperstock.security.auth.jwt.refreshToken.RefreshTokenService;
 
 import java.util.UUID;
 
@@ -28,7 +26,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private final ApplicationEventPublisher publisher;
     private final AppUserApi appUserApi;
 
     public AppUserDTO register(@Valid RegisterUserRequest registerUserRequest) {
@@ -37,11 +34,7 @@ public class AuthService {
                 registerUserRequest.password(),
                 registerUserRequest.displayName()
         );
-        AppUserDTO appUserDTO = appUserApi.create(createAppUserCommand);
-
-        publisher.publishEvent(new AppUserRegisteredEvent(appUserDTO));
-
-        return appUserDTO;
+        return appUserApi.create(createAppUserCommand);
     }
 
     public LoginResponse login(LoginRequest loginRequest) {

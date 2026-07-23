@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal;
+package pl.maropce.paperstock.security.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserAuthenticationData;
-import pl.maropce.paperstock.auth.AppUserDetails;
+import pl.maropce.paperstock.security.AppUserDetails;
 
 @Service
 @RequiredArgsConstructor

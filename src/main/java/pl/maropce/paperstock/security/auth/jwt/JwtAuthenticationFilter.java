@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal.jwt;
+package pl.maropce.paperstock.security.auth.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -11,8 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pl.maropce.paperstock.auth.AppUserDetails;
-import pl.maropce.paperstock.auth.internal.AppUserDetailsServiceImpl;
+import pl.maropce.paperstock.security.AppUserDetails;
+import pl.maropce.paperstock.security.auth.AppUserDetailsServiceImpl;
 
 import java.io.IOException;
 

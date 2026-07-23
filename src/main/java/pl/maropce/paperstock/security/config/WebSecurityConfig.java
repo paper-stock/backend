@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal.config;
+package pl.maropce.paperstock.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.maropce.paperstock.auth.internal.jwt.JwtAuthenticationFilter;
+import pl.maropce.paperstock.appUser.Role;
+import pl.maropce.paperstock.security.auth.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig {
+class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) {
@@ -32,6 +33,7 @@ public class WebSecurityConfig {
                         headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers(
                                 "/h2-console/**",
                                 "/docs",
@@ -42,6 +44,9 @@ public class WebSecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/login",
                                 "/api/auth/refresh"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/alpaca/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

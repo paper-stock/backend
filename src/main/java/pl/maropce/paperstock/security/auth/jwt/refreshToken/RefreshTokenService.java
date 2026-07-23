@@ -1,15 +1,15 @@
-package pl.maropce.paperstock.auth.internal.jwt.refreshToken;
+package pl.maropce.paperstock.security.auth.jwt.refreshToken;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.auth.AppUserDetails;
-import pl.maropce.paperstock.auth.internal.AppUserDetailsServiceImpl;
-import pl.maropce.paperstock.auth.internal.dto.LoginResponse;
-import pl.maropce.paperstock.auth.internal.jwt.JwtUtil;
-import pl.maropce.paperstock.auth.internal.jwt.refreshToken.exception.InvalidRefreshTokenException;
+import pl.maropce.paperstock.security.AppUserDetails;
+import pl.maropce.paperstock.security.auth.AppUserDetailsServiceImpl;
+import pl.maropce.paperstock.security.auth.dto.LoginResponse;
+import pl.maropce.paperstock.security.auth.jwt.JwtUtil;
+import pl.maropce.paperstock.security.auth.jwt.refreshToken.exception.InvalidRefreshTokenException;
 
 import java.time.Instant;
 import java.util.UUID;

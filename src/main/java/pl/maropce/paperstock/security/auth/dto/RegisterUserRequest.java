@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.auth.internal.dto;
+package pl.maropce.paperstock.security.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
