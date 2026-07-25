@@ -1,6 +1,7 @@
 package pl.maropce.paperstock.security.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,7 @@ public class AppUserDetailsServiceImpl implements UserDetailsService {
 
     private final AppUserApi appUserApi;
 
+    @NullMarked
     @Override
     public AppUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
@@ -44,16 +43,14 @@ public class AuthService {
                         loginRequest.password()
                 ));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         Object principal = authentication.getPrincipal();
 
-        if (!(principal instanceof AppUserDetails userDetails)) {
+        if (!(principal instanceof AppUserDetails appUserDetails)) {
             throw new IllegalStateException("Authentication principal is not an instance of AppUserDetails");
         }
 
-        String accessToken = jwtUtil.generateToken(userDetails);
-        String refreshToken = refreshTokenService.generateRefreshToken(userDetails.getUsername());
+        String accessToken = jwtUtil.generateToken(appUserDetails);
+        String refreshToken = refreshTokenService.generateRefreshToken(appUserDetails);
         return new LoginResponse(accessToken, refreshToken);
     }
 

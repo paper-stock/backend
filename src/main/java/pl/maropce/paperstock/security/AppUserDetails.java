@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,7 @@ public class AppUserDetails implements UserDetails {
 
     private GrantedAuthority authority;
 
+    @NonNull
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(authority);
@@ -35,6 +37,7 @@ public class AppUserDetails implements UserDetails {
         return password;
     }
 
+    @NonNull
     @Override
     public String getUsername() {
         return username;

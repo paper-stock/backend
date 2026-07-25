@@ -17,16 +17,16 @@ import java.util.Date;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String JWT_SECRET;
+    private String jwtSecret;
 
     @Value("${jwt.expiration}")
-    private long EXPIRATION_TIME;
+    private long expirationTime;
 
-    private SecretKey SECRET_KEY;
+    private SecretKey secretKey;
 
     @PostConstruct
     public void init() {
-        SECRET_KEY = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
+        secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateToken(AppUserDetails appUserDetails) {
@@ -34,14 +34,14 @@ public class JwtUtil {
                 .subject(appUserDetails.getUsername())
                 .claim("roles", appUserDetails.getAuthorities())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY)
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(secretKey)
                 .compact();
     }
 
     public String extractUsername(String token) {
         JwtParser jwtParser = Jwts.parser()
-                .verifyWith(SECRET_KEY)
+                .verifyWith(secretKey)
                 .build();
 
         return jwtParser.parseSignedClaims(token)
@@ -50,7 +50,7 @@ public class JwtUtil {
     }
     private Date extractExpiration(String token) {
         JwtParser jwtParser = Jwts.parser()
-                .verifyWith(SECRET_KEY)
+                .verifyWith(secretKey)
                 .build();
 
         return jwtParser.parseSignedClaims(token)
