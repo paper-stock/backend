@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.auth;
+package pl.maropce.paperstock.security.internal.auth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,11 @@ import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.security.AppUserDetails;
-import pl.maropce.paperstock.security.auth.dto.LoginRequest;
-import pl.maropce.paperstock.security.auth.dto.LoginResponse;
-import pl.maropce.paperstock.security.auth.dto.RegisterUserRequest;
-import pl.maropce.paperstock.security.auth.jwt.JwtUtil;
-import pl.maropce.paperstock.security.auth.jwt.refreshToken.RefreshTokenService;
+import pl.maropce.paperstock.security.internal.auth.dto.LoginRequest;
+import pl.maropce.paperstock.security.internal.auth.dto.LoginResponse;
+import pl.maropce.paperstock.security.internal.auth.dto.RegisterUserRequest;
+import pl.maropce.paperstock.security.internal.auth.jwt.JwtUtil;
+import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.RefreshTokenService;
 
 import java.util.UUID;
 

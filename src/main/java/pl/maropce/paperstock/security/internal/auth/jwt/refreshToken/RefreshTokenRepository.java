@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.auth.jwt.refreshToken;
+package pl.maropce.paperstock.security.internal.auth.jwt.refreshToken;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

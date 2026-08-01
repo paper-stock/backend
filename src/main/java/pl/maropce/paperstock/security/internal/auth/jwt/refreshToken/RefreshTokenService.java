@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.auth.jwt.refreshToken;
+package pl.maropce.paperstock.security.internal.auth.jwt.refreshToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,10 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.security.AppUserDetails;
-import pl.maropce.paperstock.security.auth.AppUserDetailsServiceImpl;
-import pl.maropce.paperstock.security.auth.dto.LoginResponse;
-import pl.maropce.paperstock.security.auth.jwt.JwtUtil;
-import pl.maropce.paperstock.security.auth.jwt.refreshToken.exception.InvalidRefreshTokenException;
+import pl.maropce.paperstock.security.internal.auth.AppUserDetailsServiceImpl;
+import pl.maropce.paperstock.security.internal.auth.dto.LoginResponse;
+import pl.maropce.paperstock.security.internal.auth.jwt.JwtUtil;
+import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.exception.InvalidRefreshTokenException;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     @Value("${jwt.refresh-token.expiration}")
-    private Long EXPIRATION_TIME;
+    private Long expirationTime;
 
     private final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 
@@ -36,7 +36,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(UUID.randomUUID().toString())
                 .username(appUserDetails.getUsername())
-                .expiryDate(Instant.now().plusMillis(EXPIRATION_TIME))
+                .expiryDate(Instant.now().plusMillis(expirationTime))
                 .build();
         RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
 

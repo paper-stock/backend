@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.auth.jwt;
+package pl.maropce.paperstock.security.internal.auth.jwt;
 
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -48,6 +48,7 @@ public class JwtUtil {
                 .getPayload()
                 .getSubject();
     }
+
     private Date extractExpiration(String token) {
         JwtParser jwtParser = Jwts.parser()
                 .verifyWith(secretKey)

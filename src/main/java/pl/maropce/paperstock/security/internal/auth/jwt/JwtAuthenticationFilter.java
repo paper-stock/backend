@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.auth.jwt;
+package pl.maropce.paperstock.security.internal.auth.jwt;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pl.maropce.paperstock.security.AppUserDetails;
 import pl.maropce.paperstock.security.JwtAuthenticationEntryPoint;
-import pl.maropce.paperstock.security.auth.AppUserDetailsServiceImpl;
+import pl.maropce.paperstock.security.internal.auth.AppUserDetailsServiceImpl;
 
 import java.io.IOException;
 

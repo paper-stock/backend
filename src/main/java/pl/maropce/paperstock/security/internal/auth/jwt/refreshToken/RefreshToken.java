@@ -1,6 +1,9 @@
-package pl.maropce.paperstock.security.auth.jwt.refreshToken;
+package pl.maropce.paperstock.security.internal.auth.jwt.refreshToken;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
