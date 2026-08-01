@@ -25,6 +25,24 @@ jwt:
   refresh-token:
     expiration: 604800000 #7days
 
+alpaca:
+  api:
+    key: ${ALPACA_API_KEY}
+    secret: ${ALPACA_API_SECRET}
+    data-url: https://data.alpaca.markets/v2
+    trading-url: https://paper-api.alpaca.markets/v2
+    streamUrl: wss://stream.data.alpaca.markets/v2/delayed_sip
+
+logo:
+  dev:
+    host: https://img.logo.dev
+    publishable-key: ${LOGO_DEV_PUBLISHABLE_KEY}
+
+stock:
+  sync:
+    cron: 0 0 3 * * * # Every day at 3 AM
+    zone: UTC
+
 logging:
   level:
     pl.maropce.paperstock: DEBUG
