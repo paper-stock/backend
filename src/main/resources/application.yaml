@@ -51,4 +51,4 @@ logging:
 
 default:
   users:
-    initialize: false
+    initialize: true
