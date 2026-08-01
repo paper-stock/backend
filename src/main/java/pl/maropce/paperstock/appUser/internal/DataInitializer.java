@@ -1,21 +1,28 @@
 package pl.maropce.paperstock.appUser.internal;
 
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.maropce.paperstock.appUser.Role;
 
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class DataInitializer {
 
     private final AppUserAccountRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${default.users.initialize:false}")
+    private boolean initialize;
+
     @PostConstruct
     public void initialize() {
+        if (!initialize) {
+            return;
+        }
         addUser("Admin", "admin@gmail.com", "password", Role.ADMIN);
         addUser("User", "user@gmail.com", "password", Role.USER);
     }

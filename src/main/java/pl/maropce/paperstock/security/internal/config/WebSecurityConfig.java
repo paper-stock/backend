@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security.config;
+package pl.maropce.paperstock.security.internal.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.security.JwtAccessDeniedHandler;
 import pl.maropce.paperstock.security.JwtAuthenticationEntryPoint;
-import pl.maropce.paperstock.security.auth.jwt.JwtAuthenticationFilter;
+import pl.maropce.paperstock.security.internal.auth.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -42,7 +42,6 @@ class WebSecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(
                                 "/h2-console/**",
-                                "/docs",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
@@ -51,9 +50,6 @@ class WebSecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/refresh",
                                 "/error"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/api/alpaca/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
