@@ -2,6 +2,7 @@ package pl.maropce.paperstock.alpaca;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -9,6 +10,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -23,13 +25,13 @@ public class AlpacaMarketDataClient {
         this.webDataClient = webDataClient;
     }
 
-    public List<BarDTO> getBars(
+    public List<AlpacaBar> getBars(
             String symbol,
             String timeframe,
             Instant from,
             Instant to
     ) {
-        List<BarDTO> results = new ArrayList<>();
+        List<AlpacaBar> results = new ArrayList<>();
 
         String pageToken = null;
 
@@ -39,7 +41,7 @@ public class AlpacaMarketDataClient {
             final String nextPageToken = pageToken;
             AlpacaBarsResponse response = webDataClient.get()
                     .uri(uri -> {
-                                URI build = uri.path("/stocks/bars")
+                                URI build = uri.path("/v2/stocks/bars")
                                         .queryParam("symbols", symbol)
                                         .queryParam("timeframe", timeframe)
                                         .queryParam("limit", 10000)
@@ -71,5 +73,37 @@ public class AlpacaMarketDataClient {
 
         log.info("Total requests for {}: {}", symbol, requests);
         return results;
+    }
+
+    public Map<String, AlpacaStockSnapshot> getSnapshots(List<String> symbols) {
+
+        return webDataClient.get()
+                .uri(uri -> {
+                            URI build = uri
+                                    .path("/v2/stocks/snapshots")
+                                    .queryParam("feed", "delayed_sip")
+                                    .queryParam("symbols", String.join(",", symbols))
+                                    .build();
+                            log.info("url: {}", build);
+                            return build;
+                        }
+                )
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, AlpacaStockSnapshot>>() {
+                })
+                .block();
+    }
+
+    public AlpacaMostActiveStocksResponse getMostActiveStocks(int top) {
+        return webDataClient.get()
+                .uri(uri -> uri
+                        .path("/v1beta1/screener/stocks/most-actives")
+                        .queryParam("by", "trades")
+                        .queryParam("top", top)
+                        .build()
+                )
+                .retrieve()
+                .bodyToMono(AlpacaMostActiveStocksResponse.class)
+                .block();
     }
 }

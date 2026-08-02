@@ -14,4 +14,6 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
             String name,
             String exchange
     );
+
+    List<Stock> findAllBySymbolIn(List<String> symbols);
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public record AlpacaBarsResponse(
-        Map<String, List<BarDTO>> bars,
+        Map<String, List<AlpacaBar>> bars,
 
         @JsonProperty("next_page_token")
         String nextPageToken

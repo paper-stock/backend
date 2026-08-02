@@ -18,6 +18,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
 
 jwt:
   secret: ${JWT_SECRET}
@@ -29,7 +33,7 @@ alpaca:
   api:
     key: ${ALPACA_API_KEY}
     secret: ${ALPACA_API_SECRET}
-    data-url: https://data.alpaca.markets/v2
+    data-url: https://data.alpaca.markets
     trading-url: https://paper-api.alpaca.markets/v2
     streamUrl: wss://stream.data.alpaca.markets/v2/delayed_sip
 

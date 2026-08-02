@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.maropce.paperstock.alpaca.AlpacaBar;
 import pl.maropce.paperstock.alpaca.AlpacaMarketDataClient;
-import pl.maropce.paperstock.alpaca.BarDTO;
 import pl.maropce.paperstock.candle.internal.dto.CandleDTO;
 import pl.maropce.paperstock.candle.internal.dto.CandleMapper;
 import pl.maropce.paperstock.util.MarketClock;
@@ -67,7 +67,7 @@ public class CandleService {
     private List<Candle> fetchMissingAndStore(
             String symbol, Timeframe timeframe, Instant from, Instant to, List<Candle> cached
     ) {
-        List<BarDTO> bars = alpacaMarketDataClient.getBars(symbol, timeframe.getValue(), from, to);
+        List<AlpacaBar> bars = alpacaMarketDataClient.getBars(symbol, timeframe.getValue(), from, to);
 
         log.info("Fetched {} bars", bars.size());
 
