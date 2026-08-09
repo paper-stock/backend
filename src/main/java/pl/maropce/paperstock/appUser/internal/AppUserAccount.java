@@ -27,7 +27,7 @@ public class AppUserAccount {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role roles;
+    private Role role;
 
     @Column(nullable = false)
     private boolean isEnabled;

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserAuthenticationData;
 import pl.maropce.paperstock.appUser.AppUserDTO;
+import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
-import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
 
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class AppUserService {
                                 createAppUserCommand.password()
                         )
                 )
-                .roles(Role.USER)
+                .role(Role.USER)
                 .appUser(appUser)
                 .isEnabled(true)
                 .build();
@@ -51,7 +51,7 @@ public class AppUserService {
                 .appUserId(appUserAccount.getAppUser().getId())
                 .email(appUserAccount.getEmail())
                 .password(appUserAccount.getPassword())
-                .role(appUserAccount.getRoles())
+                .role(appUserAccount.getRole())
                 .isEnabled(appUserAccount.isEnabled())
                 .build();
     }

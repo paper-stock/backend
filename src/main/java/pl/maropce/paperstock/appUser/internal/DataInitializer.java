@@ -34,7 +34,7 @@ class DataInitializer {
         AppUserAccount appUserAccount = AppUserAccount.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .roles(role)
+                .role(role)
                 .isEnabled(true)
                 .appUser(appUser)
                 .build();
