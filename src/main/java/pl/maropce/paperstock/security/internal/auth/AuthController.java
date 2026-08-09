@@ -7,10 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.security.AppUserDetails;
-import pl.maropce.paperstock.security.internal.auth.dto.LoginRequest;
-import pl.maropce.paperstock.security.internal.auth.dto.LoginResponse;
-import pl.maropce.paperstock.security.internal.auth.dto.RefreshRequest;
-import pl.maropce.paperstock.security.internal.auth.dto.RegisterUserRequest;
+import pl.maropce.paperstock.security.internal.auth.dto.*;
 import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.RefreshTokenService;
 
 @RestController
@@ -47,5 +44,14 @@ public class AuthController {
             @AuthenticationPrincipal AppUserDetails appUserDetails
     ) {
         return authService.whoami(appUserDetails.getAppUserId());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestBody LogoutRequest logoutRequest
+
+    ) {
+        authService.logout(logoutRequest);
+        return ResponseEntity.noContent().build();
     }
 }

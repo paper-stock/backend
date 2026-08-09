@@ -48,6 +48,7 @@ class WebSecurityConfig {
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login",
+                                "/api/auth/logout",
                                 "/api/auth/refresh",
                                 "/error"
                         ).permitAll()

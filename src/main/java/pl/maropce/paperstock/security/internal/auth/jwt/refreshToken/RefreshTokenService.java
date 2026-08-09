@@ -14,6 +14,7 @@ import pl.maropce.paperstock.security.internal.auth.jwt.JwtUtil;
 import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.exception.InvalidRefreshTokenException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -66,5 +67,20 @@ public class RefreshTokenService {
 
     private boolean isTokenExpired(RefreshToken token) {
         return token.getExpiryDate().isBefore(Instant.now());
+    }
+
+    public void delete(String token) {
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByToken(token);
+        if (refreshTokenOptional.isPresent()) {
+            RefreshToken refreshToken = refreshTokenOptional.get();
+            refreshTokenRepository.delete(refreshToken);
+        } else {
+            log.warn("Attempted to delete a non-existent refresh token: {}", token);
+        }
+    }
+
+    public void deleteAllExpired() {
+        int count = refreshTokenRepository.deleteAllByExpiryDateBefore(Instant.now());
+        log.info("Deleted {} expired refresh tokens", count);
     }
 }

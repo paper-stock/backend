@@ -4,7 +4,6 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.maropce.paperstock.security.AppUserDetails;
@@ -13,7 +12,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtUtil {
 
     @Value("${jwt.secret}")
