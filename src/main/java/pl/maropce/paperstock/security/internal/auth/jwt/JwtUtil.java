@@ -21,10 +21,14 @@ public class JwtUtil {
     private long expirationTime;
 
     private SecretKey secretKey;
+    private JwtParser jwtParser;
 
     @PostConstruct
     public void init() {
         secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        jwtParser = Jwts.parser()
+                .verifyWith(secretKey)
+                .build();
     }
 
     public String generateToken(AppUserDetails appUserDetails) {
@@ -38,31 +42,13 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
-        JwtParser jwtParser = Jwts.parser()
-                .verifyWith(secretKey)
-                .build();
-
         return jwtParser.parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
     }
 
-    private Date extractExpiration(String token) {
-        JwtParser jwtParser = Jwts.parser()
-                .verifyWith(secretKey)
-                .build();
-
-        return jwtParser.parseSignedClaims(token)
-                .getPayload()
-                .getExpiration();
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
     public boolean validateToken(String token, AppUserDetails appUserDetails) {
         final String username = extractUsername(token);
-        return username.equals(appUserDetails.getUsername()) && !isTokenExpired(token);
+        return username.equals(appUserDetails.getUsername());
     }
 }
