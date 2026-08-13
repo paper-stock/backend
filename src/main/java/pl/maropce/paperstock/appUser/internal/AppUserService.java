@@ -9,6 +9,7 @@ import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
+import pl.maropce.paperstock.appUser.internal.exception.UserAlreadyExistsException;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
 
 import java.util.UUID;
@@ -24,7 +25,13 @@ public class AppUserService {
 
     @Transactional
     public AppUserDTO create(CreateAppUserCommand createAppUserCommand) {
-        AppUser appUser = AppUser.builder().displayName(createAppUserCommand.displayName()).build();
+
+        if(appUserAccountRepository.existsByEmail(createAppUserCommand.email())) {
+            throw new UserAlreadyExistsException(createAppUserCommand.email());
+        }
+        AppUser appUser = AppUser.builder()
+                .displayName(createAppUserCommand.displayName())
+                .build();
         AppUserAccount appUserAccount = AppUserAccount.builder()
                 .email(createAppUserCommand.email())
                 .password(
