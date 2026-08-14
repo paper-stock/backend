@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class RefreshTokenCleanUpScheduler {
+class RefreshTokenCleanUpScheduler {
 
     private final RefreshTokenService refreshTokenService;
 

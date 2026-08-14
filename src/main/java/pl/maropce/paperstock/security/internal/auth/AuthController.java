@@ -13,7 +13,7 @@ import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.RefreshToke
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController {
+class AuthController {
 
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;

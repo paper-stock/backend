@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 
 @Configuration
 @Slf4j
-public class SecurityHeadersConfig {
+class SecurityHeadersConfig {
 
     @Value("${app.security.frame-options:DENY}")
     private String frameOptions;

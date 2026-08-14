@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CandleRepository extends JpaRepository<Candle, UUID> {
+interface CandleRepository extends JpaRepository<Candle, UUID> {
 
     List<Candle> findBySymbolAndTimeframeAndTimestampBetweenOrderByTimestampAsc(
             String symbol,

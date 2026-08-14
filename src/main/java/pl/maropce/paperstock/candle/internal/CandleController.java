@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/candles/{symbol}")
 @RequiredArgsConstructor
-public class CandleController {
+class CandleController {
 
     private final CandleService candleService;
 

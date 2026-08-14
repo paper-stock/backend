@@ -20,7 +20,7 @@ import java.time.Duration;
 
 @Configuration
 @Slf4j
-public class AlpacaClientConfig {
+class AlpacaClientConfig {
 
     @Bean
     @Qualifier("alpacaDataRestClient")

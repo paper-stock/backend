@@ -10,7 +10,7 @@ import pl.maropce.paperstock.security.CorsProperties;
 
 @Configuration
 @RequiredArgsConstructor
-public class CorsConfig {
+class CorsConfig {
 
     private final CorsProperties corsProperties;
 

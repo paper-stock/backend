@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CandleService {
+class CandleService {
 
     private final AlpacaFacade alpacaFacade;
     private final CandleRepository candleRepository;

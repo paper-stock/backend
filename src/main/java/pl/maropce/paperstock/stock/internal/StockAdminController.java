@@ -9,7 +9,7 @@ import pl.maropce.paperstock.stock.internal.sync.StockSyncService;
 @RestController
 @RequestMapping("/api/admin/stocks")
 @RequiredArgsConstructor
-public class StockAdminController {
+class StockAdminController {
 
     private final StockSyncService stockSyncService;
 
