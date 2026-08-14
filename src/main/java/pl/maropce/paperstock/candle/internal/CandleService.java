@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.alpaca.AlpacaBar;
-import pl.maropce.paperstock.alpaca.AlpacaMarketDataClient;
+import pl.maropce.paperstock.alpaca.AlpacaFacade;
 import pl.maropce.paperstock.candle.internal.dto.CandleDTO;
 import pl.maropce.paperstock.candle.internal.dto.CandleMapper;
 import pl.maropce.paperstock.util.MarketClock;
@@ -13,10 +12,7 @@ import pl.maropce.paperstock.util.MarketClock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CandleService {
 
-    private final AlpacaMarketDataClient alpacaMarketDataClient;
+    private final AlpacaFacade alpacaFacade;
     private final CandleRepository candleRepository;
     private final CandleMapper candleMapper;
     private final MarketClock marketClock;
@@ -67,7 +63,10 @@ public class CandleService {
     private List<Candle> fetchMissingAndStore(
             String symbol, Timeframe timeframe, Instant from, Instant to, List<Candle> cached
     ) {
-        List<AlpacaBar> bars = alpacaMarketDataClient.getBars(symbol, timeframe.getValue(), from, to);
+        List<Candle> bars = alpacaFacade.getBars(symbol, timeframe.getValue(), from, to)
+                .stream()
+                .map(marketBar -> candleMapper.toEntity(marketBar, symbol, timeframe))
+                .toList();
 
         log.info("Fetched {} bars", bars.size());
 
@@ -76,23 +75,17 @@ public class CandleService {
                 .collect(Collectors.toSet());
 
         List<Candle> newCandles = bars.stream()
-                .filter(bar -> !alreadyCached.contains(bar.t()))
-                .map(bar -> Candle.builder()
-                        .symbol(symbol)
-                        .timeframe(timeframe)
-                        .timestamp(bar.t())
-                        .open(bar.o())
-                        .high(bar.h())
-                        .low(bar.l())
-                        .close(bar.c())
-                        .build())
+                .filter(bar -> !alreadyCached.contains(bar.getTimestamp()))
                 .toList();
 
         List<Candle> saved = candleRepository.saveAll(newCandles);
 
         List<Candle> merged = new ArrayList<>(cached);
         merged.addAll(saved);
-        return merged;
+
+        return merged.stream()
+                .sorted(Comparator.comparing(Candle::getTimestamp))
+                .toList();
     }
 
     private Instant calculateFrom(Timeframe timeframe) {

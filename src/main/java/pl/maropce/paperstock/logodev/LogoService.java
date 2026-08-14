@@ -2,6 +2,7 @@ package pl.maropce.paperstock.logodev;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.maropce.paperstock.logodev.internal.LogoDevProperties;
 
 @Service
 @RequiredArgsConstructor

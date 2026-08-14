@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.maropce.paperstock.stock.internal.dto.MarketMoversDTO;
 import pl.maropce.paperstock.stock.internal.dto.StockDTO;
 import pl.maropce.paperstock.stock.internal.dto.StockSnapshotDTO;
 
@@ -31,5 +32,13 @@ public class StockController {
             @RequestParam(defaultValue = "64") int logoSize
     ) {
         return stockService.getMostActiveStocks(top, logoSize);
+    }
+
+    @GetMapping("/top-movers")
+    public MarketMoversDTO getTopMovers(
+            @RequestParam(defaultValue = "10") int top,
+            @RequestParam(defaultValue = "64") int logoSize
+    ) {
+        return stockService.getTopMovers(top, logoSize);
     }
 }

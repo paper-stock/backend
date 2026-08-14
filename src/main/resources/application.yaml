@@ -6,15 +6,12 @@ spring:
     import: optional:classpath:application-local.yaml
   application:
     name: paper-stock
-  h2:
-    console:
-      enabled: true
   datasource:
-    url: jdbc:h2:mem:paper-stock
-    username: sa
-    password: ''
-    driver-class-name: org.h2.Driver
+    url: ${DATASOURCE_URL:jdbc:h2:mem:paper-stock}
+    username: ${DATASOURCE_USERNAME:sa}
+    password: ${DATASOURCE_PASSWORD:}
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -23,6 +20,10 @@ spring:
         jdbc:
           batch_size: 100
 
+app:
+  security:
+    frame-options: DENY
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 900000 #15min
@@ -30,6 +31,7 @@ jwt:
     expiration: 604800000 #7days
 
 alpaca:
+  max-pages: 10
   api:
     key: ${ALPACA_API_KEY}
     secret: ${ALPACA_API_SECRET}
@@ -45,7 +47,12 @@ logo:
 stock:
   sync:
     cron: 0 0 3 * * * # Every day at 3 AM
-    zone: UTC
+    timezone: UTC
+
+refresh-token:
+  cleanup:
+    cron: 0 0 3 * * * # Every day at 3 AM
+    timezone: UTC
 
 logging:
   level:
@@ -55,4 +62,15 @@ logging:
 
 default:
   users:
-    initialize: true
+    initialize: false
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081}
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers: "*"
+  allow-credentials: false

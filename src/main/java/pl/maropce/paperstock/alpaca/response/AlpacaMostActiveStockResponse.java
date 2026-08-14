@@ -1,8 +1,8 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.alpaca.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record AlpacaMostActiveStock(
+public record AlpacaMostActiveStockResponse(
         String symbol,
 
         @JsonProperty("trade_count")

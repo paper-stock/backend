@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.maropce.paperstock.stock.internal.sync.AssetData;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -57,30 +55,5 @@ public class Stock {
                 || !Objects.equals(name, assetData.name())
                 || !Objects.equals(status, assetData.status())
                 || tradable != assetData.tradable();
-    }
-
-    public List<String> getChanges(AssetData assetData) {
-
-        List<String> changes = new ArrayList<>();
-
-        if (!Objects.equals(name, assetData.name())) {
-            changes.add(
-                    "name: " + name + " -> " + assetData.name()
-            );
-        }
-
-        if (!Objects.equals(exchange, assetData.exchange())) {
-            changes.add(
-                    "exchange: " + exchange + " -> " + assetData.exchange()
-            );
-        }
-
-        if (!Objects.equals(symbol, assetData.symbol())) {
-            changes.add(
-                    "symbol: " + symbol + " -> " + assetData.symbol()
-            );
-        }
-
-        return changes;
     }
 }

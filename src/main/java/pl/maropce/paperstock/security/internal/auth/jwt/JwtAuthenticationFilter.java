@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pl.maropce.paperstock.security.AppUserDetails;
-import pl.maropce.paperstock.security.JwtAuthenticationEntryPoint;
 import pl.maropce.paperstock.security.internal.auth.AppUserDetailsServiceImpl;
 
 import java.io.IOException;

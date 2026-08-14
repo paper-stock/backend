@@ -3,15 +3,13 @@ package pl.maropce.paperstock.stock.internal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.maropce.paperstock.alpaca.AlpacaMarketDataClient;
-import pl.maropce.paperstock.alpaca.AlpacaMostActiveStock;
-import pl.maropce.paperstock.alpaca.AlpacaMostActiveStocksResponse;
-import pl.maropce.paperstock.alpaca.AlpacaStockSnapshot;
+import org.springframework.transaction.annotation.Transactional;
+import pl.maropce.paperstock.alpaca.AlpacaFacade;
+import pl.maropce.paperstock.alpaca.MarketStockSnapshot;
+import pl.maropce.paperstock.alpaca.MarketTopMover;
+import pl.maropce.paperstock.alpaca.MarketTopMovers;
 import pl.maropce.paperstock.logodev.LogoService;
-import pl.maropce.paperstock.stock.internal.dto.StockDTO;
-import pl.maropce.paperstock.stock.internal.dto.StockMapper;
-import pl.maropce.paperstock.stock.internal.dto.StockSnapshotDTO;
-import pl.maropce.paperstock.stock.internal.dto.StockSnapshotMapper;
+import pl.maropce.paperstock.stock.internal.dto.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StockService {
 
-    private final AlpacaMarketDataClient alpacaMarketDataClient;
+    private final AlpacaFacade alpacaFacade;
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
     private final LogoService logoService;
@@ -85,40 +83,85 @@ public class StockService {
     }
 
     public List<StockSnapshotDTO> getMostActiveStocks(int top, int logoSize) {
-        AlpacaMostActiveStocksResponse mostActiveStocks =
-                alpacaMarketDataClient.getMostActiveStocks(top);
 
-        List<String> symbols = mostActiveStocks.mostActives()
-                .stream()
-                .map(AlpacaMostActiveStock::symbol)
-                .toList();
+        List<String> symbols = alpacaFacade.getMostActiveStocks(top);
 
-
-        Map<String, AlpacaStockSnapshot> snapshots = alpacaMarketDataClient.getSnapshots(symbols);
-
-        List<Stock> allBySymbolIn = stockRepository
-                .findAllBySymbolIn(symbols);
-
-        Map<String, Stock> stocksBySymbol = allBySymbolIn
+        Map<String, Stock> stocksBySymbol = stockRepository
+                .findAllBySymbolIn(symbols)
                 .stream()
                 .collect(Collectors.toMap(
                         Stock::getSymbol,
                         Function.identity()
                 ));
 
+        Map<String, MarketStockSnapshot> snapshots =
+                alpacaFacade.getSnapshots(symbols);
+
         return symbols.stream()
                 .map(symbol -> {
                     Stock stock = stocksBySymbol.get(symbol);
-                    AlpacaStockSnapshot snapshot = snapshots.get(symbol);
+                    MarketStockSnapshot snapshot = snapshots.get(symbol);
 
                     if (stock == null || snapshot == null) {
+                        log.warn("Symbol {} not found", symbol);
                         return null;
                     }
 
-                    return stockSnapshotMapper.toStockSnapshotDTO(stock, snapshot, logoService.getLogoUrl(symbol, logoSize));
+                    return stockSnapshotMapper.toStockSnapshotDTO(
+                            stock,
+                            snapshot,
+                            logoService.getLogoUrl(symbol, logoSize)
+                    );
                 })
                 .filter(Objects::nonNull)
                 .toList();
     }
 
+    @Transactional
+    public MarketMoversDTO getTopMovers(int top, int logoSize) {
+        MarketTopMovers marketMovers = alpacaFacade.getTopMarketMovers(top);
+
+        List<StockMoverDTO> gainers = getMarketMovers(marketMovers.gainers(), logoSize);
+        List<StockMoverDTO> losers = getMarketMovers(marketMovers.losers(), logoSize);
+
+
+        return new MarketMoversDTO(gainers, losers);
+    }
+
+    private List<StockMoverDTO> getMarketMovers(List<MarketTopMover> marketMovers, int logoSize) {
+        List<String> symbols = marketMovers.stream()
+                .map(MarketTopMover::symbol)
+                .toList();
+
+        Map<String, Stock> stocksBySymbol = stockRepository
+                .findAllBySymbolIn(symbols)
+                .stream()
+                .collect(Collectors.toMap(
+                        Stock::getSymbol,
+                        Function.identity()
+                ));
+
+        return marketMovers.stream()
+                .map(mover -> {
+                    Stock stock = stocksBySymbol.get(mover.symbol());
+
+                    if (stock == null) {
+                        log.warn("Symbol {} not found", mover.symbol());
+                        return null;
+                    }
+
+                    return new StockMoverDTO(
+                            stock.getId(),
+                            stock.getExchange(),
+                            stock.getSymbol(),
+                            stock.getName(),
+                            mover.price(),
+                            mover.percentChange(),
+                            mover.change(),
+                            logoService.getLogoUrl(stock.getSymbol(), logoSize)
+                    );
+                })
+                .filter(Objects::nonNull)
+                .toList();
+    }
 }

@@ -1,16 +1,10 @@
 package pl.maropce.paperstock.alpaca;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.UUID;
 
-public record AlpacaAssetResponse(
-
-        UUID id,
-
-        @JsonProperty("class")
-        String assetClass,
-
+public record MarketStock(
+        UUID externalId,
+        String stockClass,
         String exchange,
         String symbol,
         String name,

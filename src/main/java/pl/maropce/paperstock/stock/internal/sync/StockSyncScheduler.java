@@ -14,7 +14,7 @@ public class StockSyncScheduler {
 
     @Scheduled(
             cron = "${stock.sync.cron}",
-            zone = "${stock.sync.zone}"
+            zone = "${stock.sync.timezone}"
     )
     public void syncAssets() {
         stockSyncService.syncStocks();

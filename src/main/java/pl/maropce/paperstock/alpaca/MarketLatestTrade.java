@@ -1,10 +1,10 @@
-package pl.maropce.paperstock.alpaca.response;
+package pl.maropce.paperstock.alpaca;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-public record LatestTrade(
+public record MarketLatestTrade(
         List<String> c,
         long i,
         BigDecimal p,

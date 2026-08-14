@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.logodev;
+package pl.maropce.paperstock.logodev.internal;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

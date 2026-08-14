@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.alpaca.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,6 +10,6 @@ public record AlpacaMostActiveStocksResponse(
         Instant lastUpdated,
 
         @JsonProperty("most_actives")
-        List<AlpacaMostActiveStock> mostActives
+        List<AlpacaMostActiveStockResponse> mostActives
 ) {
 }

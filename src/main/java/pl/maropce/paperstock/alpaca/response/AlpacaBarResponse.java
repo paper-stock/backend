@@ -1,9 +1,9 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.alpaca.response;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public record AlpacaBar(
+public record AlpacaBarResponse(
         BigDecimal o,
         BigDecimal h,
         BigDecimal l,

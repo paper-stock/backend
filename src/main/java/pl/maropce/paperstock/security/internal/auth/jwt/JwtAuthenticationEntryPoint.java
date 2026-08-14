@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security;
+package pl.maropce.paperstock.security.internal.auth.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

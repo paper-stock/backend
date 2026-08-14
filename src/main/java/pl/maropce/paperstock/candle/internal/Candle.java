@@ -14,7 +14,7 @@ import java.util.UUID;
         )
 )
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Setter

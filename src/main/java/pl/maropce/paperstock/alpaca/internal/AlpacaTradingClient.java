@@ -1,32 +1,33 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.alpaca.internal;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
+import pl.maropce.paperstock.alpaca.response.AlpacaAssetResponse;
 
 import java.util.List;
 
 @Component
 public class AlpacaTradingClient {
 
-    private final WebClient webTradingClient;
+    private final RestClient alpacaTradingRestClient;
 
     public AlpacaTradingClient(
-            @Qualifier("alpacaTradingWebClient") WebClient webClient
+            @Qualifier("alpacaTradingRestClient") RestClient alpacaTradingRestClient
     ) {
-        this.webTradingClient = webClient;
+        this.alpacaTradingRestClient = alpacaTradingRestClient;
     }
 
     public List<AlpacaAssetResponse> getAllAssets() {
-        return webTradingClient.get()
+        return alpacaTradingRestClient.get()
                 .uri(uri -> uri
                         .path("/assets")
                         .queryParam("status", "active")
                         .queryParam("asset_class", "us_equity")
                         .build())
                 .retrieve()
-                .bodyToFlux(AlpacaAssetResponse.class)
-                .collectList()
-                .block();
+                .body(new ParameterizedTypeReference<>() {
+                });
     }
 }
