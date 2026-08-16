@@ -2,10 +2,12 @@ package pl.maropce.paperstock.security.internal.auth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
@@ -16,6 +18,7 @@ import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.RefreshToke
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -58,11 +61,16 @@ public class AuthService {
         refreshTokenService.delete(logoutRequest.refreshToken());
     }
 
+    @Transactional
     public void changePassword(AppUserDetails appUserDetails, ChangePasswordRequest changePasswordRequest) {
         appUserApi.changePassword(
                 appUserDetails,
                 changePasswordRequest.oldPassword(),
                 changePasswordRequest.newPassword()
         );
+
+        refreshTokenService.deleteAllByUsername(appUserDetails.getUsername());
+
+        log.info("Password changed successfully for user: {}", appUserDetails.getUsername());
     }
 }

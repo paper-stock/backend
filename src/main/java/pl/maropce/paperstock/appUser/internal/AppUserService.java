@@ -76,7 +76,7 @@ public class AppUserService {
                 .orElseThrow(() -> new UserNotFoundException(appUserDetails.getUsername()));
 
         if (!passwordEncoder.matches(oldPassword, appUserAccount.getPassword())) {
-            throw new InvalidOldPasswordException();
+            throw new InvalidOldPasswordException(appUserDetails.getUsername());
         }
 
         appUserAccount.setPassword(passwordEncoder.encode(newPassword));

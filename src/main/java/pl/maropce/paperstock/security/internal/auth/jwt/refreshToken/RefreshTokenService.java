@@ -2,6 +2,7 @@ package pl.maropce.paperstock.security.internal.auth.jwt.refreshToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
@@ -82,5 +83,9 @@ public class RefreshTokenService {
     public void deleteAllExpired() {
         int count = refreshTokenRepository.deleteAllByExpiryDateBefore(Instant.now());
         log.info("Deleted {} expired refresh tokens", count);
+    }
+
+    public void deleteAllByUsername(@NonNull String username) {
+        refreshTokenRepository.deleteAllByUsername(username);
     }
 }

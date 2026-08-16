@@ -26,9 +26,9 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ProblemDetail handleBaseException(BaseException ex) {
         if (ex.getStatusCode().is5xxServerError()) {
-            log.error("Business exception with server error status: {}", ex.getMessage(), ex);
+            log.error("Business exception with server error {} status: {}", ex.getClass().getSimpleName(), ex.getMessage(), ex);
         } else {
-            log.debug("Business exception: {} - {}", ex.getStatusCode(), ex.getMessage());
+            log.debug("{}: {} - {}", ex.getClass().getSimpleName(), ex.getStatusCode(), ex.getMessage());
         }
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getStatusCode(), ex.getMessage());
