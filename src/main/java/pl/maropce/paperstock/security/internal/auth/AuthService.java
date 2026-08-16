@@ -10,14 +10,9 @@ import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.security.AppUserDetails;
-import pl.maropce.paperstock.security.internal.auth.dto.LoginRequest;
-import pl.maropce.paperstock.security.internal.auth.dto.LoginResponse;
-import pl.maropce.paperstock.security.internal.auth.dto.LogoutRequest;
-import pl.maropce.paperstock.security.internal.auth.dto.RegisterUserRequest;
+import pl.maropce.paperstock.security.internal.auth.dto.*;
 import pl.maropce.paperstock.security.internal.auth.jwt.JwtUtil;
 import pl.maropce.paperstock.security.internal.auth.jwt.refreshToken.RefreshTokenService;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -55,11 +50,19 @@ public class AuthService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    public AppUserDTO whoami(UUID appUserId) {
-        return appUserApi.findAppUserById(appUserId);
+    public AppUserDTO whoami(AppUserDetails appUserDetails) {
+        return appUserApi.findAppUserById(appUserDetails.getAppUserId());
     }
 
     public void logout(LogoutRequest logoutRequest) {
         refreshTokenService.delete(logoutRequest.refreshToken());
+    }
+
+    public void changePassword(AppUserDetails appUserDetails, ChangePasswordRequest changePasswordRequest) {
+        appUserApi.changePassword(
+                appUserDetails,
+                changePasswordRequest.oldPassword(),
+                changePasswordRequest.newPassword()
+        );
     }
 }

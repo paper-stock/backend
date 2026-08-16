@@ -43,7 +43,7 @@ class AuthController {
     public AppUserDTO whoami(
             @AuthenticationPrincipal AppUserDetails appUserDetails
     ) {
-        return authService.whoami(appUserDetails.getAppUserId());
+        return authService.whoami(appUserDetails);
     }
 
     @PostMapping("/logout")
@@ -52,6 +52,15 @@ class AuthController {
 
     ) {
         authService.logout(logoutRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal AppUserDetails appUserDetails,
+            @RequestBody @Valid ChangePasswordRequest changePasswordRequest
+    ) {
+        authService.changePassword(appUserDetails, changePasswordRequest);
         return ResponseEntity.noContent().build();
     }
 }

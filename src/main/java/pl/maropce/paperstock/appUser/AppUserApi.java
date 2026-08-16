@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.maropce.paperstock.appUser.internal.AppUserService;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
+import pl.maropce.paperstock.security.AppUserDetails;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -32,4 +33,9 @@ public class AppUserApi {
     public AppUserDTO findAppUserById(UUID appUserId) {
         return appUserService.findAppUserById(appUserId);
     }
+
+    public void changePassword(AppUserDetails appUserDetails, String oldPassword, String newPassword) {
+        appUserService.changePassword(appUserDetails, oldPassword, newPassword);
+    }
+
 }

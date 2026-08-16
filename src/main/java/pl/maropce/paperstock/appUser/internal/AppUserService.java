@@ -9,8 +9,10 @@ import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserCommand;
 import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
+import pl.maropce.paperstock.appUser.internal.exception.InvalidOldPasswordException;
 import pl.maropce.paperstock.appUser.internal.exception.UserAlreadyExistsException;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
+import pl.maropce.paperstock.security.AppUserDetails;
 
 import java.util.UUID;
 
@@ -67,5 +69,17 @@ public class AppUserService {
         AppUser appUser = appUserRepository.findById(appUserId)
                 .orElseThrow(() -> new UserNotFoundException(appUserId));
         return appUserMapper.toDTO(appUser);
+    }
+
+    public void changePassword(AppUserDetails appUserDetails, String oldPassword, String newPassword) {
+        AppUserAccount appUserAccount = appUserAccountRepository.findByEmail(appUserDetails.getUsername())
+                .orElseThrow(() -> new UserNotFoundException(appUserDetails.getUsername()));
+
+        if (!passwordEncoder.matches(oldPassword, appUserAccount.getPassword())) {
+            throw new InvalidOldPasswordException();
+        }
+
+        appUserAccount.setPassword(passwordEncoder.encode(newPassword));
+        appUserAccountRepository.save(appUserAccount);
     }
 }
