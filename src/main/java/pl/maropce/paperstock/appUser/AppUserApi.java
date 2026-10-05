@@ -17,8 +17,8 @@ public class AppUserApi {
 
     private final AppUserService appUserService;
 
-    public AppUserDTO create(CreateAppUserCommand createAppUserCommand) {
-        return appUserService.create(createAppUserCommand);
+    public AppUserDTO create(CreateAppUserRequest createAppUserRequest) {
+        return appUserService.create(createAppUserRequest);
     }
 
     public Optional<AppUserAuthenticationData> getUserAuthData(String email) {

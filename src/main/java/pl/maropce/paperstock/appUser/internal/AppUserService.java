@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserAuthenticationData;
 import pl.maropce.paperstock.appUser.AppUserDTO;
-import pl.maropce.paperstock.appUser.CreateAppUserCommand;
+import pl.maropce.paperstock.appUser.CreateAppUserRequest;
 import pl.maropce.paperstock.appUser.Role;
 import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
 import pl.maropce.paperstock.appUser.internal.exception.InvalidOldPasswordException;
@@ -26,19 +26,19 @@ public class AppUserService {
     private final AppUserMapper appUserMapper;
 
     @Transactional
-    public AppUserDTO create(CreateAppUserCommand createAppUserCommand) {
+    public AppUserDTO create(CreateAppUserRequest createAppUserRequest) {
 
-        if(appUserAccountRepository.existsByEmail(createAppUserCommand.email())) {
-            throw new UserAlreadyExistsException(createAppUserCommand.email());
+        if(appUserAccountRepository.existsByEmail(createAppUserRequest.email())) {
+            throw new UserAlreadyExistsException(createAppUserRequest.email());
         }
         AppUser appUser = AppUser.builder()
-                .displayName(createAppUserCommand.displayName())
+                .displayName(createAppUserRequest.displayName())
                 .build();
         AppUserAccount appUserAccount = AppUserAccount.builder()
-                .email(createAppUserCommand.email())
+                .email(createAppUserRequest.email())
                 .password(
                         passwordEncoder.encode(
-                                createAppUserCommand.password()
+                                createAppUserRequest.password()
                         )
                 )
                 .role(Role.USER)

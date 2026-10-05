@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
-import pl.maropce.paperstock.appUser.CreateAppUserCommand;
+import pl.maropce.paperstock.appUser.CreateAppUserRequest;
 import pl.maropce.paperstock.security.AppUserDetails;
 import pl.maropce.paperstock.security.internal.auth.dto.*;
 import pl.maropce.paperstock.security.internal.auth.jwt.JwtUtil;
@@ -27,12 +27,12 @@ public class AuthService {
     private final AppUserApi appUserApi;
 
     public AppUserDTO register(@Valid RegisterUserRequest registerUserRequest) {
-        CreateAppUserCommand createAppUserCommand = new CreateAppUserCommand(
+        CreateAppUserRequest createAppUserRequest = new CreateAppUserRequest(
                 registerUserRequest.email(),
                 registerUserRequest.password(),
                 registerUserRequest.displayName()
         );
-        return appUserApi.create(createAppUserCommand);
+        return appUserApi.create(createAppUserRequest);
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
