@@ -37,7 +37,7 @@ public class StockService {
         String normalizedQuery = query.trim().toLowerCase();
 
         List<Stock> stocks = stockRepository
-                .findBySymbolContainingIgnoreCaseOrNameContainingIgnoreCaseOrExchangeContainingIgnoreCase(
+                .searchActiveStocks(
                         normalizedQuery, normalizedQuery, normalizedQuery
                 );
 

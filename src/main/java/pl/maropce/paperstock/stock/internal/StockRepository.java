@@ -1,6 +1,7 @@
 package pl.maropce.paperstock.stock.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,7 +10,20 @@ import java.util.UUID;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, UUID> {
 
-    List<Stock> findBySymbolContainingIgnoreCaseOrNameContainingIgnoreCaseOrExchangeContainingIgnoreCase(
+    @Query("""
+                SELECT s
+                FROM Stock s
+                WHERE
+                (
+                    LOWER(s.symbol) LIKE LOWER(CONCAT('%', :symbol, '%'))
+                    OR
+                    LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%'))
+                    OR
+                    LOWER(s.exchange) LIKE LOWER(CONCAT('%', :exchange, '%'))
+                )
+                AND s.status LIKE 'ACTIVE'
+            """)
+    List<Stock> searchActiveStocks(
             String symbol,
             String name,
             String exchange
