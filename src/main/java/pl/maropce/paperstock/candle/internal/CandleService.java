@@ -43,7 +43,7 @@ class CandleService {
         }
 
         return result.stream()
-                .map(candleMapper::toDto)
+                .map(candleMapper::toDTO)
                 .toList();
     }
 

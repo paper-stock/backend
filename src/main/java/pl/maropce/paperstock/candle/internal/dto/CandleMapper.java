@@ -10,7 +10,7 @@ import pl.maropce.paperstock.candle.internal.Timeframe;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CandleMapper {
 
-    CandleDTO toDto(Candle candle);
+    CandleDTO toDTO(Candle candle);
 
     Candle toEntity(MarketBar marketBar, String symbol, Timeframe timeframe);
 }
