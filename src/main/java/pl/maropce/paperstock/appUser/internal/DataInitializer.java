@@ -1,24 +1,28 @@
 package pl.maropce.paperstock.appUser.internal;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import pl.maropce.paperstock.appUser.CreateAppUserRequest;
 import pl.maropce.paperstock.appUser.Role;
+
+import java.util.Optional;
 
 
 @Component
 @RequiredArgsConstructor
 class DataInitializer {
 
-    private final AppUserAccountRepository appUserRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    private final AppUserService appUserService;
+    private final AppUserAccountRepository appUserAccountRepository;
 
     @Value("${default.users.initialize:false}")
     private boolean initialize;
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void initialize() {
         if (!initialize) {
             return;
@@ -28,16 +32,17 @@ class DataInitializer {
     }
 
     public void addUser(String displayName, String email, String password, Role role) {
-        AppUser appUser = AppUser.builder()
-                .displayName(displayName)
-                .build();
-        AppUserAccount appUserAccount = AppUserAccount.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .role(role)
-                .isEnabled(true)
-                .appUser(appUser)
-                .build();
-        appUserRepository.save(appUserAccount);
+        CreateAppUserRequest createAppUserRequest = new CreateAppUserRequest(email, password, displayName);
+
+        appUserService.create(createAppUserRequest);
+        Optional<AppUserAccount> byEmail = appUserAccountRepository.findByEmail(email);
+
+        if (byEmail.isPresent()) {
+            AppUserAccount appUserAccount = byEmail.get();
+            appUserAccount.setRole(role);
+            appUserAccountRepository.save(appUserAccount);
+        } else {
+            throw new IllegalStateException("User not found after creation: " + email);
+        }
     }
 }

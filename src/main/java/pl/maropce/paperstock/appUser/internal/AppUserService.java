@@ -1,13 +1,11 @@
 package pl.maropce.paperstock.appUser.internal;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.appUser.AppUserAuthenticationData;
-import pl.maropce.paperstock.appUser.AppUserDTO;
-import pl.maropce.paperstock.appUser.CreateAppUserRequest;
-import pl.maropce.paperstock.appUser.Role;
+import pl.maropce.paperstock.appUser.*;
 import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
 import pl.maropce.paperstock.appUser.internal.exception.InvalidOldPasswordException;
 import pl.maropce.paperstock.appUser.internal.exception.UserAlreadyExistsException;
@@ -24,6 +22,7 @@ public class AppUserService {
     private final AppUserAccountRepository appUserAccountRepository;
     private final AppUserRepository appUserRepository;
     private final AppUserMapper appUserMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public AppUserDTO create(CreateAppUserRequest createAppUserRequest) {
@@ -47,6 +46,8 @@ public class AppUserService {
                 .build();
 
         AppUserAccount userAccount = appUserAccountRepository.save(appUserAccount);
+
+        applicationEventPublisher.publishEvent(new AppUserCreatedEvent(userAccount.getAppUser().getId()));
 
         return appUserMapper.toDTO(userAccount.getAppUser());
     }

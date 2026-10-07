@@ -1,6 +1,8 @@
 package pl.maropce.paperstock.appUser;
 
+import java.util.UUID;
+
 public record AppUserDTO(
-        String id,
+        UUID id,
         String displayName
 ) {}
