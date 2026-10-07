@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.stock.internal.dto;
+package pl.maropce.paperstock.stock;
 
 import lombok.Builder;
 
@@ -11,7 +11,7 @@ public record StockDTO(
         String exchange,
         String symbol,
         String name,
-        String status,
+        StockStatus status,
         boolean tradable,
 
         String logoUrl

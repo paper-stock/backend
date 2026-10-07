@@ -9,7 +9,9 @@ import pl.maropce.paperstock.alpaca.MarketStockSnapshot;
 import pl.maropce.paperstock.alpaca.MarketTopMover;
 import pl.maropce.paperstock.alpaca.MarketTopMovers;
 import pl.maropce.paperstock.logodev.LogoService;
+import pl.maropce.paperstock.stock.StockDTO;
 import pl.maropce.paperstock.stock.internal.dto.*;
+import pl.maropce.paperstock.stock.internal.exception.StockNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -163,5 +165,11 @@ public class StockService {
                 })
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    public StockDTO findStockBySymbol(String symbol) {
+        Stock stock = stockRepository.findActiveStockBySymbol(symbol)
+                .orElseThrow(() -> new StockNotFoundException(symbol));
+        return stockMapper.toDTO(stock);
     }
 }

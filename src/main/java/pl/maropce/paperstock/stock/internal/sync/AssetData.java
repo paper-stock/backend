@@ -1,6 +1,7 @@
 package pl.maropce.paperstock.stock.internal.sync;
 
 import lombok.Builder;
+import pl.maropce.paperstock.stock.StockStatus;
 
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public record AssetData(
         String exchange,
         String symbol,
         String name,
-        String status,
+        StockStatus status,
         boolean tradable
 ) {
 }

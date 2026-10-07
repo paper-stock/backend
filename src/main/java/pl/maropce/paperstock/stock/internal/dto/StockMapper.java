@@ -3,6 +3,7 @@ package pl.maropce.paperstock.stock.internal.dto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import pl.maropce.paperstock.stock.StockDTO;
 import pl.maropce.paperstock.stock.internal.Stock;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)

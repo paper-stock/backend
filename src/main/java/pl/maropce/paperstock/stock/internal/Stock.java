@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pl.maropce.paperstock.stock.StockStatus;
 import pl.maropce.paperstock.stock.internal.sync.AssetData;
 
 import java.util.Objects;
@@ -30,7 +31,10 @@ public class Stock {
     private String stockClass;
     private String exchange;
     private String name;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StockStatus status;
+
     private boolean tradable;
 
     public boolean updateFrom(AssetData assetData) {
