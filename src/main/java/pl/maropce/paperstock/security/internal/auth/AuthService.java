@@ -64,7 +64,7 @@ public class AuthService {
     @Transactional
     public void changePassword(AppUserDetails appUserDetails, ChangePasswordRequest changePasswordRequest) {
         appUserApi.changePassword(
-                appUserDetails,
+                appUserDetails.getAppUserId(),
                 changePasswordRequest.oldPassword(),
                 changePasswordRequest.newPassword()
         );

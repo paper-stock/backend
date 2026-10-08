@@ -10,7 +10,6 @@ import pl.maropce.paperstock.appUser.internal.dto.AppUserMapper;
 import pl.maropce.paperstock.appUser.internal.exception.InvalidOldPasswordException;
 import pl.maropce.paperstock.appUser.internal.exception.UserAlreadyExistsException;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
-import pl.maropce.paperstock.security.AppUserDetails;
 
 import java.util.UUID;
 
@@ -27,9 +26,10 @@ public class AppUserService {
     @Transactional
     public AppUserDTO create(CreateAppUserRequest createAppUserRequest) {
 
-        if(appUserAccountRepository.existsByEmail(createAppUserRequest.email())) {
+        if (appUserAccountRepository.existsByEmail(createAppUserRequest.email())) {
             throw new UserAlreadyExistsException(createAppUserRequest.email());
         }
+
         AppUser appUser = AppUser.builder()
                 .displayName(createAppUserRequest.displayName())
                 .build();
@@ -66,18 +66,20 @@ public class AppUserService {
                 .build();
     }
 
+    @Transactional
     public AppUserDTO findAppUserById(UUID appUserId) {
         AppUser appUser = appUserRepository.findById(appUserId)
                 .orElseThrow(() -> new UserNotFoundException(appUserId));
         return appUserMapper.toDTO(appUser);
     }
 
-    public void changePassword(AppUserDetails appUserDetails, String oldPassword, String newPassword) {
-        AppUserAccount appUserAccount = appUserAccountRepository.findByEmail(appUserDetails.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(appUserDetails.getUsername()));
+    @Transactional
+    public void changePassword(UUID appUserId, String oldPassword, String newPassword) {
+        AppUserAccount appUserAccount = appUserAccountRepository.findByAppUser_Id(appUserId)
+                .orElseThrow(() -> new UserNotFoundException(appUserId));
 
         if (!passwordEncoder.matches(oldPassword, appUserAccount.getPassword())) {
-            throw new InvalidOldPasswordException(appUserDetails.getUsername());
+            throw new InvalidOldPasswordException(appUserId);
         }
 
         appUserAccount.setPassword(passwordEncoder.encode(newPassword));

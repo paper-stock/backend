@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUser.CreateAppUserRequest;
 import pl.maropce.paperstock.appUser.Role;
 
 import java.util.Optional;
-
 
 @Component
 @RequiredArgsConstructor
@@ -34,11 +34,11 @@ class DataInitializer {
     public void addUser(String displayName, String email, String password, Role role) {
         CreateAppUserRequest createAppUserRequest = new CreateAppUserRequest(email, password, displayName);
 
-        appUserService.create(createAppUserRequest);
-        Optional<AppUserAccount> byEmail = appUserAccountRepository.findByEmail(email);
+        AppUserDTO appUserDTO = appUserService.create(createAppUserRequest);
+        Optional<AppUserAccount> userAccountOptional = appUserAccountRepository.findByAppUser_Id(appUserDTO.id());
 
-        if (byEmail.isPresent()) {
-            AppUserAccount appUserAccount = byEmail.get();
+        if (userAccountOptional.isPresent()) {
+            AppUserAccount appUserAccount = userAccountOptional.get();
             appUserAccount.setRole(role);
             appUserAccountRepository.save(appUserAccount);
         } else {

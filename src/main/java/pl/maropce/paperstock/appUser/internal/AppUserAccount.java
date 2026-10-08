@@ -36,6 +36,6 @@ public class AppUserAccount {
             cascade = CascadeType.ALL,
             optional = false
     )
-    @JoinColumn(name = "app_user_id", nullable = false)
+    @JoinColumn(name = "app_user_id", unique = true, nullable = false)
     private AppUser appUser;
 }

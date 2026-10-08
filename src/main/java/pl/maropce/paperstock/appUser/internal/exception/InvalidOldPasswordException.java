@@ -3,8 +3,10 @@ package pl.maropce.paperstock.appUser.internal.exception;
 import org.springframework.http.HttpStatus;
 import pl.maropce.paperstock.exception.BaseException;
 
+import java.util.UUID;
+
 public class InvalidOldPasswordException extends BaseException {
-    public InvalidOldPasswordException(String username) {
-        super(HttpStatus.BAD_REQUEST, String.format("Invalid old password for user: %s", username));
+    public InvalidOldPasswordException(UUID appUserId) {
+        super(HttpStatus.BAD_REQUEST, String.format("Invalid old password for user: %s", appUserId));
     }
 }
