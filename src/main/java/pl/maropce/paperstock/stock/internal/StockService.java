@@ -168,7 +168,7 @@ public class StockService {
     }
 
     public StockDTO findStockBySymbol(String symbol) {
-        Stock stock = stockRepository.findActiveStockBySymbol(symbol)
+        Stock stock = stockRepository.findStockBySymbol(symbol)
                 .orElseThrow(() -> new StockNotFoundException(symbol));
         return stockMapper.toDTO(stock);
     }

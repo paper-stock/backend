@@ -30,13 +30,7 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
             String exchange
     );
 
-    @Query("""
-            SELECT s
-            FROM Stock s
-            WHERE LOWER(s.symbol) = LOWER(:symbol)
-            AND s.status = 'ACTIVE'
-            """)
-    Optional<Stock> findActiveStockBySymbol(String symbol);
+    Optional<Stock> findStockBySymbol(String symbol);
 
     List<Stock> findAllBySymbolIn(List<String> symbols);
 }
