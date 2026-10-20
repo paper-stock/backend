@@ -106,7 +106,6 @@ public class AppUserService {
                 appUserRepository.save(appUser));
     }
 
-    //TODO do sprawdzenia
     public void payFunds(UUID appUserId, BigDecimal amount) {
         log.debug("Paying {} amount of funds for user {}", amount, appUserId);
 
