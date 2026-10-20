@@ -3,9 +3,11 @@ package pl.maropce.paperstock.appUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import pl.maropce.paperstock.appUser.internal.AddFundsRequest;
 import pl.maropce.paperstock.appUser.internal.AppUserService;
 import pl.maropce.paperstock.appUser.internal.exception.UserNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,4 +39,12 @@ public class AppUserApi {
         appUserService.changePassword(appUserId, oldPassword, newPassword);
     }
 
+
+    public void addFunds(UUID appUserId, BigDecimal amount) {
+        appUserService.addFunds(appUserId, new AddFundsRequest(amount));
+    }
+
+    public void payFunds(UUID appUserId, BigDecimal funds) {
+        appUserService.payFunds(appUserId, funds);
+    }
 }
