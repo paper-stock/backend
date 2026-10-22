@@ -172,4 +172,8 @@ public class StockService {
                 .orElseThrow(() -> new StockNotFoundException(symbol));
         return stockMapper.toDTO(stock);
     }
+
+    public boolean isActiveStockExistsBySymbol(String symbol) {
+        return stockRepository.existsActiveStockBySymbol(symbol);
+    }
 }

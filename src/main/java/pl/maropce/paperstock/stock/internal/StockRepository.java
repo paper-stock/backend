@@ -2,6 +2,7 @@ package pl.maropce.paperstock.stock.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,4 +34,13 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
     Optional<Stock> findStockBySymbol(String symbol);
 
     List<Stock> findAllBySymbolIn(List<String> symbols);
+
+
+    @Query("""
+    SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END
+    FROM Stock s
+    WHERE s.symbol = :symbol
+      AND s.status = 'ACTIVE'
+""")
+    boolean existsActiveStockBySymbol(@Param("symbol") String symbol);
 }
