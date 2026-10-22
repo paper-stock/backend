@@ -9,10 +9,7 @@ import org.springframework.web.client.RestClient;
 import pl.maropce.paperstock.alpaca.response.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -39,7 +36,7 @@ public class AlpacaMarketDataClient {
 
         String pageToken = null;
 
-        int requests = 0;
+        int requestsCount = 0;
 
         do {
             final String nextPageToken = pageToken;
@@ -69,9 +66,9 @@ public class AlpacaMarketDataClient {
 
             pageToken = response.nextPageToken();
 
-            requests++;
+            requestsCount++;
 
-            if (requests >= maxPages) {
+            if (requestsCount >= maxPages) {
                 log.warn("Reached max page limit ({}) for symbol {}, timeframe {}. Remaining data may be incomplete.",
                         maxPages, symbol, timeframe);
                 break;
@@ -79,7 +76,7 @@ public class AlpacaMarketDataClient {
 
         } while (pageToken != null);
 
-        log.info("Total requests for {}: {}", symbol, requests);
+        log.info("Total requests for {}: {}", symbol, requestsCount);
         return results;
     }
 
@@ -118,5 +115,51 @@ public class AlpacaMarketDataClient {
                 )
                 .retrieve()
                 .body(AlpacaTopMoversResponse.class);
+    }
+
+    public Map<String, List<AlpacaQuoteResponse>> getQuotes(Set<String> symbols, Instant start, Instant end) {
+
+        Map<String, List<AlpacaQuoteResponse>> results = new HashMap<>();
+        String pageToken = null;
+        int requestsCount = 0;
+
+        do {
+            final String nextPageToken = pageToken;
+            AlpacaQuotesResponse response = dataRestClient.get()
+                    .uri(uri -> uri
+                            .path("/v2/stocks/quotes")
+                            .queryParam("symbols", String.join(",", symbols))
+                            .queryParam("start", start)
+                            .queryParam("end", end)
+                            .queryParam("limit", 10000)
+                            .queryParamIfPresent("page_token", Optional.ofNullable(nextPageToken))
+                            .build()
+                    )
+                    .retrieve()
+                    .body(AlpacaQuotesResponse.class);
+
+            if (response == null) {
+                log.warn("Null response received for quotes request. Symbols: {}, Start: {}, End: {}", symbols, start, end);
+                break;
+            }
+
+
+            response.quotes().forEach((stockSymbol, quotes) ->
+                    results.computeIfAbsent(stockSymbol, _ -> new ArrayList<>()).addAll(quotes)
+            );
+
+
+            pageToken = response.nextPageToken();
+            requestsCount++;
+
+            if (requestsCount >= maxPages) {
+                log.warn("Reached max page limit ({}) for symbols {}. Remaining data may be incomplete.",
+                        maxPages, symbols);
+                break;
+            }
+
+        } while (pageToken != null);
+
+        return results;
     }
 }

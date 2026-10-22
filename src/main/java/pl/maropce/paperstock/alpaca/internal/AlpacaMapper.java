@@ -27,4 +27,7 @@ public interface AlpacaMapper {
     MarketStock toMarketStock(AlpacaAssetResponse alpacaAssetResponse);
 
     MarketTopMovers toMarketTopMovers(AlpacaTopMoversResponse alpacaTopMoversResponse);
+
+    MarketQuote toMarketQuote(AlpacaQuoteResponse alpacaQuoteResponse);
+
 }
