@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security;
+package pl.maropce.paperstock.appUserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

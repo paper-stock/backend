@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.maropce.paperstock.security.AppUserDetails;
+import pl.maropce.paperstock.appUserDetails.AppUserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security;
+package pl.maropce.paperstock.appUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;

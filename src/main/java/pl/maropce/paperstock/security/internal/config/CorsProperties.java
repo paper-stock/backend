@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.security;
+package pl.maropce.paperstock.security.internal.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

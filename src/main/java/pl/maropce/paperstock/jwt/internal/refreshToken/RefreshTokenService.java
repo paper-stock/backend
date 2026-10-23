@@ -8,11 +8,11 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.maropce.paperstock.appUserDetails.AppUserDetailServiceImpl;
+import pl.maropce.paperstock.appUserDetails.AppUserDetails;
 import pl.maropce.paperstock.jwt.TokenResponse;
 import pl.maropce.paperstock.jwt.internal.JwtUtil;
 import pl.maropce.paperstock.jwt.internal.refreshToken.exception.InvalidRefreshTokenException;
-import pl.maropce.paperstock.security.AppUserDetailServiceImpl;
-import pl.maropce.paperstock.security.AppUserDetails;
 
 import java.time.Instant;
 import java.util.Optional;

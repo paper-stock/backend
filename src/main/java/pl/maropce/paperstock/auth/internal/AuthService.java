@@ -12,11 +12,14 @@ import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUserAccount.AppUserAccountApi;
 import pl.maropce.paperstock.appUserAccount.AppUserAccountDTO;
-import pl.maropce.paperstock.auth.internal.dto.*;
+import pl.maropce.paperstock.appUserDetails.AppUserDetails;
+import pl.maropce.paperstock.auth.internal.dto.ChangePasswordRequest;
+import pl.maropce.paperstock.auth.internal.dto.LoginRequest;
+import pl.maropce.paperstock.auth.internal.dto.LogoutRequest;
+import pl.maropce.paperstock.auth.internal.dto.RegisterUserRequest;
 import pl.maropce.paperstock.auth.internal.exception.AccountAlreadyExistsException;
 import pl.maropce.paperstock.jwt.JwtApi;
 import pl.maropce.paperstock.jwt.TokenResponse;
-import pl.maropce.paperstock.security.AppUserDetails;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +50,7 @@ public class AuthService {
 
     }
 
-    public LoginResponse login(LoginRequest loginRequest) {
+    public TokenResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.email(),
@@ -62,7 +65,7 @@ public class AuthService {
 
         String accessToken = jwtApi.generateToken(appUserDetails);
         String refreshToken = jwtApi.generateRefreshToken(appUserDetails);
-        return new LoginResponse(accessToken, refreshToken);
+        return new TokenResponse(accessToken, refreshToken);
     }
 
     public AppUserAccountDTO whoami(AppUserDetails appUserDetails) {

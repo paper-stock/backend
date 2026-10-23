@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.maropce.paperstock.appUserAccount.AppUserAccountDTO;
+import pl.maropce.paperstock.appUserDetails.AppUserDetails;
 import pl.maropce.paperstock.auth.internal.dto.*;
 import pl.maropce.paperstock.jwt.TokenResponse;
-import pl.maropce.paperstock.security.AppUserDetails;
 
 
 @RestController
@@ -26,7 +26,7 @@ class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokenResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(
                 authService.login(loginRequest)
         );
