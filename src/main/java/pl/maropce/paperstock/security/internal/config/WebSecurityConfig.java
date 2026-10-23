@@ -11,10 +11,10 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.maropce.paperstock.appUser.Role;
-import pl.maropce.paperstock.security.internal.auth.jwt.JwtAccessDeniedHandler;
-import pl.maropce.paperstock.security.internal.auth.jwt.JwtAuthenticationEntryPoint;
-import pl.maropce.paperstock.security.internal.auth.jwt.JwtAuthenticationFilter;
+import pl.maropce.paperstock.appUserAccount.Role;
+import pl.maropce.paperstock.jwt.JwtAccessDeniedHandler;
+import pl.maropce.paperstock.jwt.JwtAuthenticationEntryPoint;
+import pl.maropce.paperstock.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity

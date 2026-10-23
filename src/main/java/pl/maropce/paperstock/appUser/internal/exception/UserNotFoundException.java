@@ -10,8 +10,4 @@ public class UserNotFoundException extends BaseException {
     public UserNotFoundException(UUID id) {
         super(HttpStatus.NOT_FOUND, String.format("User with id: %s does not exists", id));
     }
-
-    public UserNotFoundException(String email) {
-        super(HttpStatus.NOT_FOUND, String.format("User with email: %s does not exists", email));
-    }
 }
