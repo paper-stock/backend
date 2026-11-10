@@ -3,7 +3,7 @@ package pl.maropce.paperstock.stock.internal.dto;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record StockSnapshotDTO(
+public record StockMostActiveDTO(
         UUID id,
         String exchange,
         String symbol,

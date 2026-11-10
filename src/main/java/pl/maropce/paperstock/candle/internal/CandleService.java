@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.alpaca.AlpacaFacade;
-import pl.maropce.paperstock.candle.internal.dto.CandleDTO;
+import pl.maropce.paperstock.candle.CandleDTO;
+import pl.maropce.paperstock.candle.Timeframe;
 import pl.maropce.paperstock.candle.internal.dto.CandleMapper;
 import pl.maropce.paperstock.util.MarketClock;
 
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-class CandleService {
+public class CandleService {
 
     private final AlpacaFacade alpacaFacade;
     private final CandleRepository candleRepository;

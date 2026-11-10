@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.candle.internal;
+package pl.maropce.paperstock.candle;
 
 import lombok.Getter;
 

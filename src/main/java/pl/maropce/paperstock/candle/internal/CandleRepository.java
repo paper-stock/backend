@@ -2,6 +2,7 @@ package pl.maropce.paperstock.candle.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import pl.maropce.paperstock.candle.Timeframe;
 
 import java.time.Instant;
 import java.util.List;

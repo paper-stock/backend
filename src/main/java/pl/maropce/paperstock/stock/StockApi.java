@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.maropce.paperstock.stock.internal.StockService;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class StockApi {
@@ -16,5 +18,9 @@ public class StockApi {
 
     public boolean isActiveStockExists(String symbol) {
         return stockService.isActiveStockExistsBySymbol(symbol);
+    }
+
+    public List<StockSnapshotDTO> getSnapshots(List<String> symbols) {
+        return stockService.getSnapshots(symbols);
     }
 }

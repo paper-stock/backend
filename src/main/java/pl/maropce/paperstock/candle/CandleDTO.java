@@ -1,8 +1,7 @@
-package pl.maropce.paperstock.candle.internal.dto;
+package pl.maropce.paperstock.candle;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pl.maropce.paperstock.candle.internal.Timeframe;
 
 import java.math.BigDecimal;
 import java.time.Instant;

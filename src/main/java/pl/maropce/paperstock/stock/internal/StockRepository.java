@@ -35,12 +35,18 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
 
     List<Stock> findAllBySymbolIn(List<String> symbols);
 
+    @Query("""
+                SELECT s.symbol
+                FROM Stock s
+                WHERE s.symbol IN :symbols
+            """)
+    List<String> findAllSymbols(List<String> symbols);
 
     @Query("""
-    SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END
-    FROM Stock s
-    WHERE s.symbol = :symbol
-      AND s.status = 'ACTIVE'
-""")
+                SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END
+                FROM Stock s
+                WHERE s.symbol = :symbol
+                  AND s.status = 'ACTIVE'
+            """)
     boolean existsActiveStockBySymbol(@Param("symbol") String symbol);
 }

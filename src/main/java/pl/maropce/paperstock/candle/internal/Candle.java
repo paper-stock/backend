@@ -2,6 +2,7 @@ package pl.maropce.paperstock.candle.internal;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pl.maropce.paperstock.candle.Timeframe;
 
 import java.math.BigDecimal;
 import java.time.Instant;

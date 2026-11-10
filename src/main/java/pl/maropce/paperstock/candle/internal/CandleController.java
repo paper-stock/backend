@@ -2,7 +2,8 @@ package pl.maropce.paperstock.candle.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import pl.maropce.paperstock.candle.internal.dto.CandleDTO;
+import pl.maropce.paperstock.candle.CandleDTO;
+import pl.maropce.paperstock.candle.Timeframe;
 
 import java.util.List;
 

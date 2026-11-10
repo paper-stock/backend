@@ -3,8 +3,9 @@ package pl.maropce.paperstock.candle.internal.dto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import pl.maropce.paperstock.alpaca.MarketBar;
+import pl.maropce.paperstock.candle.CandleDTO;
+import pl.maropce.paperstock.candle.Timeframe;
 import pl.maropce.paperstock.candle.internal.Candle;
-import pl.maropce.paperstock.candle.internal.Timeframe;
 
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
