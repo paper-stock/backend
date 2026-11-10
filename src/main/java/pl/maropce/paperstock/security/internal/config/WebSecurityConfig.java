@@ -44,6 +44,7 @@ class WebSecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/logout",
                                 "/api/auth/refresh",
+                                "/api/logos/*",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
