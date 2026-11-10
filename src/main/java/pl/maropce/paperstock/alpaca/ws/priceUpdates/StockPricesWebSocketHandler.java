@@ -17,6 +17,10 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -64,8 +68,8 @@ public class StockPricesWebSocketHandler extends TextWebSocketHandler {
 
         log.info("Client disconnected: {}", session.getId());
 
-        symbolSubscriptionManager.allSymbolsForClient(session.getId())
-                .forEach(symbol -> symbolSubscriptionManager.unsubscribe(session.getId(), symbol));
+        Set<String> symbols = symbolSubscriptionManager.allSymbolsForClient(session.getId());
+        symbolSubscriptionManager.unsubscribe(session.getId(), new ArrayList<>(symbols));
 
         clientSessionRegistry.unregister(session.getId());
 
@@ -94,9 +98,15 @@ public class StockPricesWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        if (!isActiveStock(msg.symbol())) {
-            sendError(session, "Invalid symbol: " + msg.symbol());
-            return;
+        List<String> symbols = Arrays.stream(msg.symbol().split(","))
+                .map(String::trim)
+                .toList();
+
+        for (String symbol : symbols) {
+            if (!isActiveStock(symbol)) {
+                sendError(session, "Invalid symbol: " + msg.symbol());
+                return;
+            }
         }
 
         SubscriptionCommand command = SubscriptionCommand.getCommandFromString(msg.command());
@@ -104,11 +114,11 @@ public class StockPricesWebSocketHandler extends TextWebSocketHandler {
         switch (command) {
             case SUBSCRIBE -> {
                 log.info("Client {} subscribed to symbol {}", session.getId(), msg.symbol());
-                symbolSubscriptionManager.subscribe(session.getId(), msg.symbol());
+                symbolSubscriptionManager.subscribe(session.getId(), symbols);
             }
             case UNSUBSCRIBE -> {
                 log.info("Client {} unsubscribed from symbol {}", session.getId(), msg.symbol());
-                symbolSubscriptionManager.unsubscribe(session.getId(), msg.symbol());
+                symbolSubscriptionManager.unsubscribe(session.getId(), symbols);
             }
             case UNKNOWN -> sendError(session, "Invalid command: " + msg.command());
         }

@@ -13,6 +13,8 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -55,21 +57,27 @@ public class ClientMessageHandler {
             return;
         }
 
-        if (!isActiveStock(msg.symbol())) {
-            sendError(session, "Invalid symbol: " + msg.symbol());
-            return;
+        List<String> symbols = Arrays.stream(msg.symbol().split(","))
+                .map(String::trim)
+                .toList();
+
+        for (String symbol : symbols) {
+            if (!isActiveStock(symbol)) {
+                sendError(session, "Invalid symbol: " + msg.symbol());
+                return;
+            }
         }
 
         SubscriptionCommand command = SubscriptionCommand.getCommandFromString(msg.command());
 
         switch (command) {
             case SUBSCRIBE -> {
-                log.info("Client {} subscribed to symbol {}", session.getId(), msg.symbol());
-                providerWebSocketClient.subscribe(session.getId(), msg.symbol());
+                log.info("Client {} subscribed to symbols {}", session.getId(), symbols);
+                providerWebSocketClient.subscribe(session.getId(), symbols);
             }
             case UNSUBSCRIBE -> {
                 log.info("Client {} unsubscribed from symbol {}", session.getId(), msg.symbol());
-                providerWebSocketClient.unsubscribe(session.getId(), msg.symbol());
+                providerWebSocketClient.unsubscribe(session.getId(), symbols);
             }
             case UNKNOWN -> sendError(session, "Invalid command: " + msg.command());
         }

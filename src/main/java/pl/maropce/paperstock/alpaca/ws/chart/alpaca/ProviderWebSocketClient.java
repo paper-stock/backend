@@ -13,9 +13,12 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import pl.maropce.paperstock.alpaca.config.AlpacaProperties;
 import pl.maropce.paperstock.alpaca.ws.SymbolSubscriptionManager;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,6 +31,7 @@ public class ProviderWebSocketClient {
     private final AlpacaWebSocketHandler alpacaWebSocketHandler;
 
     private final WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+    private final ObjectMapper objectMapper;
 
     private StandardWebSocketClient webSocketClient;
     private volatile WebSocketSession alpacaSession;
@@ -37,11 +41,12 @@ public class ProviderWebSocketClient {
     ProviderWebSocketClient(
             @Qualifier("chartSubscriptionManager") SymbolSubscriptionManager subscriptionManager,
             AlpacaProperties alpacaProperties,
-            AlpacaWebSocketHandler alpacaWebSocketHandler
-    ) {
+            AlpacaWebSocketHandler alpacaWebSocketHandler,
+            ObjectMapper objectMapper) {
         this.subscriptionManager = subscriptionManager;
         this.alpacaProperties = alpacaProperties;
         this.alpacaWebSocketHandler = alpacaWebSocketHandler;
+        this.objectMapper = objectMapper;
     }
 
     @PostConstruct
@@ -121,53 +126,54 @@ public class ProviderWebSocketClient {
         }
     }
 
-    public void subscribe(String clientId, String symbol) {
+    public void subscribe(String clientId, List<String> symbols) {
         ensureConnected();
 
-        if (!subscriptionManager.subscribe(clientId, symbol)) {
+        if (!subscriptionManager.subscribe(clientId, symbols)) {
             return;
         }
 
-        sendMessage(AlpacaMessageAction.SUBSCRIBE, symbol);
+        sendMessage(AlpacaMessageAction.SUBSCRIBE, symbols);
+
     }
 
-    public void unsubscribe(String clientId, String symbol) {
+    public void unsubscribe(String clientId, List<String> symbols) {
 
-        if (!subscriptionManager.unsubscribe(clientId, symbol)) {
+        if (!subscriptionManager.unsubscribe(clientId, symbols)) {
             return;
         }
 
-        sendMessage(AlpacaMessageAction.UNSUBSCRIBE, symbol);
+        sendMessage(AlpacaMessageAction.UNSUBSCRIBE, symbols);
     }
 
-    private void sendMessage(AlpacaMessageAction action, String symbol) {
+    private void sendMessage(AlpacaMessageAction action, List<String> symbols) {
         String actionName = action.getAction();
+        String jsonSymbols = objectMapper.writeValueAsString(symbols);
 
         if (isConnected()) {
             try {
                 String subscribeMessage = String.format("""
                         {
                             "action": "%s",
-                            "trades": ["%s"],
-                            "bars": ["%s"]
+                            "trades": %s,
+                            "bars": %s
                         }
-                        """, actionName, symbol, symbol);
+                        """, actionName, jsonSymbols, jsonSymbols);
                 alpacaSession.sendMessage(new TextMessage(subscribeMessage));
-                log.info("{}d to symbol: {}", actionName, symbol);
+                log.info("{}d to symbols: {}", actionName, symbols);
             } catch (Exception e) {
-                log.error("Failed to send {} message for symbol: {}", actionName, symbol, e);
+                log.error("Failed to send {} message for symbols: {}", actionName, symbols, e);
             }
         } else {
-            log.debug("Cannot {} to symbol {} because the WebSocket session is not open.", actionName, symbol);
+            log.debug("Cannot {} to symbols {} because the WebSocket session is not open.", actionName, symbols);
         }
     }
 
     public void unsubscribeAll(String clientSessionId) {
 
         Set<String> symbols = subscriptionManager.allSymbolsForClient(clientSessionId);
-        for (String symbol : symbols) {
-            unsubscribe(clientSessionId, symbol);
-        }
+
+        unsubscribe(clientSessionId, new ArrayList<>(symbols));
     }
 
     @PreDestroy

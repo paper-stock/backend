@@ -1,9 +1,6 @@
 package pl.maropce.paperstock.alpaca.ws;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SymbolSubscriptionManager {
@@ -17,6 +14,18 @@ public class SymbolSubscriptionManager {
         return firstClient;
     }
 
+    public boolean subscribe(String clientId, List<String> symbols) {
+        boolean firstClient = false;
+        for (String symbol : symbols) {
+            SymbolSubscription sub = subscriptions.computeIfAbsent(symbol, SymbolSubscription::new);
+            if (!sub.hasClients()) {
+                firstClient = true;
+            }
+            sub.addClient(clientId);
+        }
+        return firstClient;
+    }
+
     public boolean unsubscribe(String clientId, String symbol) {
         SymbolSubscription sub = subscriptions.get(symbol);
         if (sub == null) return false;
@@ -26,6 +35,20 @@ public class SymbolSubscriptionManager {
             return true;
         }
         return false;
+    }
+
+    public boolean unsubscribe(String clientId, List<String> symbols) {
+        boolean removed = false;
+        for (String symbol : symbols) {
+            SymbolSubscription sub = subscriptions.get(symbol);
+            if (sub == null) continue;
+            sub.removeClient(clientId);
+            if (!sub.hasClients()) {
+                subscriptions.remove(symbol);
+                removed = true;
+            }
+        }
+        return removed;
     }
 
     public Set<String> clientsFor(String symbol) {
