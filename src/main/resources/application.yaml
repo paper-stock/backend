@@ -13,7 +13,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
@@ -23,6 +23,9 @@ spring:
 app:
   security:
     frame-options: DENY
+  websocket:
+    send-time-limit: 10s
+    buffer-size-limit: 512KB
 
 jwt:
   secret: ${JWT_SECRET}

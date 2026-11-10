@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.alpaca.ws;
+package pl.maropce.paperstock.alpaca.ws.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

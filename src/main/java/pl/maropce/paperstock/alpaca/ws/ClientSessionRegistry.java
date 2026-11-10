@@ -1,10 +1,12 @@
 package pl.maropce.paperstock.alpaca.ws;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
+import pl.maropce.paperstock.alpaca.ws.config.WebSocketProperties;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -13,7 +15,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ClientSessionRegistry {
+
+    private final WebSocketProperties webSocketProperties;
 
     private final Map<String, WebSocketSession> sessions =
             new ConcurrentHashMap<>();
@@ -23,8 +28,8 @@ public class ClientSessionRegistry {
                 session.getId(),
                 _ -> new ConcurrentWebSocketSessionDecorator(
                         session,
-                        30_000,
-                        512 * 1024
+                        Math.toIntExact(webSocketProperties.sendTimeLimit().toMillis()),
+                        Math.toIntExact(webSocketProperties.bufferSizeLimit().toBytes())
                 )
         );
     }
