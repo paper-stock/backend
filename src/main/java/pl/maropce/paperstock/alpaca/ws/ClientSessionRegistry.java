@@ -1,7 +1,6 @@
-package pl.maropce.paperstock.alpaca.ws.client;
+package pl.maropce.paperstock.alpaca.ws;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -13,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @Slf4j
 public class ClientSessionRegistry {
 
@@ -59,7 +57,6 @@ public class ClientSessionRegistry {
         }
         return result;
     }
-
 
     public boolean hasSessions() {
         return !sessions.isEmpty();

@@ -1,25 +1,34 @@
-package pl.maropce.paperstock.alpaca.ws.client;
+package pl.maropce.paperstock.alpaca.ws.chart.client;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import pl.maropce.paperstock.alpaca.ws.alpaca.ProviderWebSocketClient;
-
+import pl.maropce.paperstock.alpaca.ws.ClientSessionRegistry;
+import pl.maropce.paperstock.alpaca.ws.chart.alpaca.ProviderWebSocketClient;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 @NullMarked
 public class ClientWebSocketHandler extends TextWebSocketHandler {
 
     private final ClientSessionRegistry clientSessionRegistry;
     private final ClientMessageHandler clientMessageHandler;
     private final ProviderWebSocketClient providerWebSocketClient;
+
+    public ClientWebSocketHandler(
+            @Qualifier("chartSessionRegistry") ClientSessionRegistry clientSessionRegistry,
+            ClientMessageHandler clientMessageHandler,
+            ProviderWebSocketClient providerWebSocketClient
+    ) {
+        this.clientSessionRegistry = clientSessionRegistry;
+        this.clientMessageHandler = clientMessageHandler;
+        this.providerWebSocketClient = providerWebSocketClient;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {

@@ -1,25 +1,14 @@
-package pl.maropce.paperstock.alpaca.ws.alpaca;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
-import pl.maropce.paperstock.alpaca.ws.client.ClientSessionRegistry;
+package pl.maropce.paperstock.alpaca.ws;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-@Service
-class SymbolSubscriptionManager {
+public class SymbolSubscriptionManager {
 
     private final Map<String, SymbolSubscription> subscriptions = new ConcurrentHashMap<>();
-    private final ClientSessionRegistry clientSessionRegistry;
-
-    SymbolSubscriptionManager(ClientSessionRegistry clientSessionRegistry) {
-        this.clientSessionRegistry = clientSessionRegistry;
-    }
 
     public boolean subscribe(String clientId, String symbol) {
         SymbolSubscription sub = subscriptions.computeIfAbsent(symbol, SymbolSubscription::new);
@@ -44,10 +33,7 @@ class SymbolSubscriptionManager {
 
         if (sub == null) return Collections.emptySet();
 
-        return clientSessionRegistry.get(sub.clients())
-                .stream()
-                .map(WebSocketSession::getId)
-                .collect(Collectors.toSet());
+        return Set.copyOf(sub.clients());
     }
 
     public Set<String> allSymbolsForClient(String clientSessionId) {
@@ -62,5 +48,37 @@ class SymbolSubscriptionManager {
 
     public Set<String> allSubscribedSymbols() {
         return Set.copyOf(subscriptions.keySet());
+    }
+
+    static class SymbolSubscription {
+
+        private final String symbol;
+
+        private final Set<String> clientsSessions =
+                ConcurrentHashMap.newKeySet();
+
+        public SymbolSubscription(String symbol) {
+            this.symbol = symbol;
+        }
+
+        public String symbol() {
+            return symbol;
+        }
+
+        public void addClient(String clientId) {
+            clientsSessions.add(clientId);
+        }
+
+        public void removeClient(String clientId) {
+            clientsSessions.remove(clientId);
+        }
+
+        public boolean hasClients() {
+            return !clientsSessions.isEmpty();
+        }
+
+        public Set<String> clients() {
+            return Set.copyOf(clientsSessions);
+        }
     }
 }

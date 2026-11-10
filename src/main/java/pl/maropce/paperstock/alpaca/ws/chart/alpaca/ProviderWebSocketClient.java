@@ -1,17 +1,18 @@
-package pl.maropce.paperstock.alpaca.ws.alpaca;
+package pl.maropce.paperstock.alpaca.ws.chart.alpaca;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.WebSocketContainer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import pl.maropce.paperstock.alpaca.config.AlpacaProperties;
+import pl.maropce.paperstock.alpaca.ws.SymbolSubscriptionManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,22 +21,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class ProviderWebSocketClient {
 
     private final SymbolSubscriptionManager subscriptionManager;
-    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+    private final AlpacaProperties alpacaProperties;
+    private final AlpacaWebSocketHandler alpacaWebSocketHandler;
+
+    private final WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     private StandardWebSocketClient webSocketClient;
     private volatile WebSocketSession alpacaSession;
 
-    private final AlpacaProperties alpacaProperties;
-    private final AlpacaWebSocketHandler alpacaWebSocketHandler;
-
     private final AtomicBoolean connecting = new AtomicBoolean(false);
 
+    ProviderWebSocketClient(
+            @Qualifier("chartSubscriptionManager") SymbolSubscriptionManager subscriptionManager,
+            AlpacaProperties alpacaProperties,
+            AlpacaWebSocketHandler alpacaWebSocketHandler
+    ) {
+        this.subscriptionManager = subscriptionManager;
+        this.alpacaProperties = alpacaProperties;
+        this.alpacaWebSocketHandler = alpacaWebSocketHandler;
+    }
+
     @PostConstruct
-    public void init() {
+    private void init() {
         container.setDefaultMaxTextMessageBufferSize(512 * 1024); // 0.5 MB
         webSocketClient = new StandardWebSocketClient(container);
 
@@ -92,7 +102,7 @@ public class ProviderWebSocketClient {
                 && current.isOpen();
     }
 
-    public void disconnect() {
+    private void disconnect() {
 
         if (!isConnected()) {
             return;
@@ -130,7 +140,7 @@ public class ProviderWebSocketClient {
         sendMessage(AlpacaMessageAction.UNSUBSCRIBE, symbol);
     }
 
-    public void sendMessage(AlpacaMessageAction action, String symbol) {
+    private void sendMessage(AlpacaMessageAction action, String symbol) {
         String actionName = action.getAction();
 
         if (isConnected()) {

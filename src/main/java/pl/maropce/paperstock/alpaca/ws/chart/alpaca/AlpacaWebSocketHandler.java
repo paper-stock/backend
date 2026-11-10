@@ -1,14 +1,15 @@
-package pl.maropce.paperstock.alpaca.ws.alpaca;
+package pl.maropce.paperstock.alpaca.ws.chart.alpaca;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import pl.maropce.paperstock.alpaca.ws.client.ClientSessionRegistry;
+import pl.maropce.paperstock.alpaca.ws.ClientSessionRegistry;
+import pl.maropce.paperstock.alpaca.ws.SymbolSubscriptionManager;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -19,12 +20,21 @@ import java.util.*;
 @Component
 @Slf4j
 @NullMarked
-@RequiredArgsConstructor
 class AlpacaWebSocketHandler extends TextWebSocketHandler {
 
     private final ClientSessionRegistry clientSessionRegistry;
     private final SymbolSubscriptionManager symbolSubscriptionManager;
     private final ObjectMapper objectMapper;
+
+    AlpacaWebSocketHandler(
+            @Qualifier("chartSessionRegistry") ClientSessionRegistry clientSessionRegistry,
+            @Qualifier("chartSubscriptionManager") SymbolSubscriptionManager symbolSubscriptionManager,
+            ObjectMapper objectMapper
+    ) {
+        this.clientSessionRegistry = clientSessionRegistry;
+        this.symbolSubscriptionManager = symbolSubscriptionManager;
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
