@@ -33,13 +33,12 @@ public class LatestPricePollingService {
         this.stockApi = stockApi;
     }
 
-
     @Scheduled(fixedDelay = 5000)
     public void pollLatestPrice() {
 
         Set<String> allSymbols = symbolSubscriptionManager.allSubscribedSymbols();
         if (allSymbols.isEmpty()) {
-            log.debug("No active subscriptions for price updates... skipping polling");
+            log.trace("No active subscriptions for price updates... skipping polling");
             return;
         }
 

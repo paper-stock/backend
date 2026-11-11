@@ -33,7 +33,10 @@ class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(frameOptionsCustomizer)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(
+                                "/api/admin/**",
+                                "/api/orders/execute-orders"
+                        ).hasAuthority(Role.ADMIN.name())
                         .requestMatchers(
                                 "/h2-console/**",
                                 "/swagger-ui/**",

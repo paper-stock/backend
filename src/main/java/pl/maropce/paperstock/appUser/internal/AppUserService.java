@@ -41,6 +41,7 @@ public class AppUserService {
         return appUserMapper.toDTO(appUser);
     }
 
+    @Transactional
     public AppUserDTO addFunds(UUID appUserId, AddFundsRequest request) {
         log.debug("Adding {} amount of funds for user {}", request.amount(), appUserId);
 
@@ -57,6 +58,7 @@ public class AppUserService {
                 appUserRepository.save(appUser));
     }
 
+    @Transactional
     public void payFunds(UUID appUserId, BigDecimal amount) {
         log.debug("Paying {} amount of funds for user {}", amount, appUserId);
 

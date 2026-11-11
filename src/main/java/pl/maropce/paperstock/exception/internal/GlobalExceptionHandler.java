@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import pl.maropce.paperstock.exception.BaseException;
 
@@ -114,6 +115,19 @@ class GlobalExceptionHandler {
         problemDetail.setDetail(ex.getMessage());
 
         return problemDetail;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex
+    ) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problem.setTitle("Invalid request parameter");
+        problem.setDetail("Invalid value '%s' for parameter '%s'."
+                .formatted(ex.getValue(), ex.getName()));
+
+        return problem;
     }
 
     @ExceptionHandler(Exception.class)
