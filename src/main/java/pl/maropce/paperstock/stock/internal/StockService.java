@@ -232,11 +232,11 @@ public class StockService {
 
         List<CandleDTO> candles = candleApi.getCandles(symbol, Timeframe.DAY_1);
 
-        BigDecimal day = test(candles, symbol, 1, ChronoUnit.DAYS);
-        BigDecimal week = test(candles, symbol, 1, ChronoUnit.WEEKS);
-        BigDecimal month = test(candles, symbol, 1, ChronoUnit.MONTHS);
-        BigDecimal quarter = test(candles, symbol, 3, ChronoUnit.MONTHS);
-        BigDecimal year = test(candles, symbol, 1, ChronoUnit.YEARS);
+        BigDecimal day = getPrice(candles, symbol, 1, ChronoUnit.DAYS);
+        BigDecimal week = getPrice(candles, symbol, 1, ChronoUnit.WEEKS);
+        BigDecimal month = getPrice(candles, symbol, 1, ChronoUnit.MONTHS);
+        BigDecimal quarter = getPrice(candles, symbol, 3, ChronoUnit.MONTHS);
+        BigDecimal year = getPrice(candles, symbol, 1, ChronoUnit.YEARS);
 
         return StockPriceHistoryDTO.builder()
                 .symbol(symbol)
@@ -248,7 +248,7 @@ public class StockService {
                 .build();
     }
 
-    public BigDecimal test(List<CandleDTO> candles, String symbol, int amount, ChronoUnit unit) {
+    private BigDecimal getPrice(List<CandleDTO> candles, String symbol, int amount, ChronoUnit unit) {
 
         ZonedDateTime targetDate = marketClock.now()
                 .atZone(ZoneOffset.UTC)
