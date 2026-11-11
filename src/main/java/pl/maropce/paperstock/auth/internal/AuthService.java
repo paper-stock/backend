@@ -11,12 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUserAccount.AppUserAccountApi;
-import pl.maropce.paperstock.appUserAccount.AppUserAccountDTO;
 import pl.maropce.paperstock.appUserDetails.AppUserDetails;
-import pl.maropce.paperstock.auth.internal.dto.ChangePasswordRequest;
-import pl.maropce.paperstock.auth.internal.dto.LoginRequest;
-import pl.maropce.paperstock.auth.internal.dto.LogoutRequest;
-import pl.maropce.paperstock.auth.internal.dto.RegisterUserRequest;
+import pl.maropce.paperstock.auth.internal.dto.*;
 import pl.maropce.paperstock.auth.internal.exception.AccountAlreadyExistsException;
 import pl.maropce.paperstock.jwt.JwtApi;
 import pl.maropce.paperstock.jwt.TokenResponse;
@@ -34,7 +30,7 @@ public class AuthService {
     private final AppUserApi appUserApi;
 
     @Transactional
-    public AppUserAccountDTO register(RegisterUserRequest request) {
+    public void register(RegisterUserRequest request) {
 
         if (appUserAccountApi.existsByEmail(request.email())) {
             throw new AccountAlreadyExistsException(request.email());
@@ -42,12 +38,11 @@ public class AuthService {
 
         AppUserDTO appUserDTO = appUserApi.create(request.displayName());
 
-        return appUserAccountApi.createNewAccount(
+        appUserAccountApi.createNewAccount(
                 request.email(),
                 passwordEncoder.encode(request.password()),
                 appUserDTO.id()
         );
-
     }
 
     public TokenResponse login(LoginRequest loginRequest) {
@@ -68,8 +63,16 @@ public class AuthService {
         return new TokenResponse(accessToken, refreshToken);
     }
 
-    public AppUserAccountDTO whoami(AppUserDetails appUserDetails) {
-        return appUserAccountApi.findByEmail(appUserDetails.getUsername());
+    public WhoAmIResponse whoami(AppUserDetails appUserDetails) {
+
+        AppUserDTO appUser = appUserApi.findAppUserById(appUserDetails.getAppUserId());
+
+        return new WhoAmIResponse(
+                appUserDetails.getUsername(),
+                appUserDetails.getRole().toString(),
+                appUserDetails.isEnabled(),
+                appUser.displayName()
+        );
     }
 
     public void logout(LogoutRequest logoutRequest) {

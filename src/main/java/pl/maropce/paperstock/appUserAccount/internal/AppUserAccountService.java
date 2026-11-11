@@ -26,7 +26,7 @@ public class AppUserAccountService {
         return appUserAccountRepository.existsByEmail(email);
     }
 
-    public AppUserAccountDTO createNewAccount(CreateNewAccountRequest request) {
+    public void createNewAccount(CreateNewAccountRequest request) {
 
         AppUserAccount appUserAccount = AppUserAccount.builder()
                 .appUserId(request.appUserId())
@@ -36,8 +36,7 @@ public class AppUserAccountService {
                 .enabled(true)
                 .build();
 
-        AppUserAccount save = appUserAccountRepository.save(appUserAccount);
-        return appUserAccountMapper.toDTO(save);
+        appUserAccountRepository.save(appUserAccount);
     }
 
     public AppUserAccountDTO findByEmail(String email) {

@@ -17,8 +17,8 @@ public class AppUserAccountApi {
         return appUserAccountService.existsByEmail(email);
     }
 
-    public AppUserAccountDTO createNewAccount(String email, String password, UUID appUserId) {
-        return appUserAccountService.createNewAccount(new CreateNewAccountRequest(email, password, appUserId));
+    public void createNewAccount(String email, String password, UUID appUserId) {
+        appUserAccountService.createNewAccount(new CreateNewAccountRequest(email, password, appUserId));
     }
 
     public AppUserAccountDTO findByEmail(String email) {

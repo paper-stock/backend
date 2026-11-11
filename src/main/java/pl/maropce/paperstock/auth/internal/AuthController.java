@@ -2,10 +2,10 @@ package pl.maropce.paperstock.auth.internal;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pl.maropce.paperstock.appUserAccount.AppUserAccountDTO;
 import pl.maropce.paperstock.appUserDetails.AppUserDetails;
 import pl.maropce.paperstock.auth.internal.dto.*;
 import pl.maropce.paperstock.jwt.TokenResponse;
@@ -19,10 +19,9 @@ class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    ResponseEntity<AppUserAccountDTO> register(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
-        return ResponseEntity.ok(
-                authService.register(registerUserRequest)
-        );
+    @ResponseStatus(HttpStatus.CREATED)
+    public void register(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
+        authService.register(registerUserRequest);
     }
 
     @PostMapping("/login")
@@ -41,10 +40,10 @@ class AuthController {
     }
 
     @GetMapping("/whoami")
-    public AppUserAccountDTO whoami(
+    public ResponseEntity<WhoAmIResponse> whoami(
             @AuthenticationPrincipal AppUserDetails appUserDetails
     ) {
-        return authService.whoami(appUserDetails);
+        return ResponseEntity.ok(authService.whoami(appUserDetails));
     }
 
     @PostMapping("/logout")

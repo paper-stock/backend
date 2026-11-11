@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import pl.maropce.paperstock.appUserAccount.AppUserAccountDTO;
 import pl.maropce.paperstock.appUserAccount.Role;
 import pl.maropce.paperstock.appUserAccount.internal.AppUserAccount;
 import pl.maropce.paperstock.appUserAccount.internal.AppUserAccountRepository;
@@ -35,9 +34,9 @@ class DataInitializer {
     public void addUser(String displayName, String email, String password, Role role) {
 
         RegisterUserRequest registerUserRequest = new RegisterUserRequest(email, password, displayName);
-        AppUserAccountDTO dto = authService.register(registerUserRequest);
+        authService.register(registerUserRequest);
 
-        Optional<AppUserAccount> appUserAccountOptional = appUserDetailsRepository.findById(dto.id());
+        Optional<AppUserAccount> appUserAccountOptional = appUserDetailsRepository.findByEmail(email);
 
         if (appUserAccountOptional.isPresent()) {
             AppUserAccount appUserDetails = appUserAccountOptional.get();
