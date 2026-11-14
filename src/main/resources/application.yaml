@@ -33,6 +33,15 @@ jwt:
   refresh-token:
     expiration: 604800000 #7days
 
+
+stripe:
+  api-key: ${STRIPE_API_KEY}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  session:
+    success-url: ${STRIPE_SESSION_SUCCESS_URL:http://localhost:8080/deposit-success.html}
+    cancel-url: ${STRIPE_SESSION_CANCEL_URL:http://localhost:8080/deposit-cancel.html}
+    expiration: 30m # 30min - 24h
+
 alpaca:
   max-pages: 10
   api:
