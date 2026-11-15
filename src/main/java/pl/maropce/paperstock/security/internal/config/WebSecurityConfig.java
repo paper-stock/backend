@@ -40,7 +40,8 @@ class WebSecurityConfig {
                         .requestMatchers(
                                 "/h2-console/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/payments/webhook"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/auth/register",
@@ -50,7 +51,7 @@ class WebSecurityConfig {
                                 "/api/logos/*",
                                 "/error"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

@@ -136,6 +136,11 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>34.1.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
