@@ -28,4 +28,12 @@ public class AppUserAccountApi {
     public void changePassword(UUID appUserAccountId, String oldPassword, String newPassword) {
         appUserAccountService.changePassword(appUserAccountId, oldPassword, newPassword);
     }
+
+    public boolean existsByRoleAdmin() {
+        return appUserAccountService.existsByRoleAdmin();
+    }
+
+    public void createAdminAccount(String email, String initialPassword, UUID appUserId) {
+        appUserAccountService.createAdminAccount(new CreateNewAccountRequest(email, initialPassword, appUserId));
+    }
 }

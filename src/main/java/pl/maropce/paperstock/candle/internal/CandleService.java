@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.alpaca.AlpacaFacade;
 import pl.maropce.paperstock.candle.CandleDTO;
 import pl.maropce.paperstock.candle.Timeframe;
 import pl.maropce.paperstock.candle.internal.dto.CandleMapper;
+import pl.maropce.paperstock.marketData.MarketDataApi;
 import pl.maropce.paperstock.util.MarketClock;
 
 import java.time.Duration;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CandleService {
 
-    private final AlpacaFacade alpacaFacade;
+    private final MarketDataApi marketDataApi;
     private final CandleRepository candleRepository;
     private final CandleMapper candleMapper;
     private final MarketClock marketClock;
@@ -64,7 +64,7 @@ public class CandleService {
     private List<Candle> fetchMissingAndStore(
             String symbol, Timeframe timeframe, Instant from, Instant to, List<Candle> cached
     ) {
-        List<Candle> bars = alpacaFacade.getBars(symbol, timeframe.getValue(), from, to)
+        List<Candle> bars = marketDataApi.getBars(symbol, timeframe.getValue(), from, to)
                 .stream()
                 .map(marketBar -> candleMapper.toEntity(marketBar, symbol, timeframe))
                 .toList();

@@ -3,8 +3,8 @@ package pl.maropce.paperstock.alpaca.internal;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import pl.maropce.paperstock.alpaca.*;
 import pl.maropce.paperstock.alpaca.response.*;
+import pl.maropce.paperstock.marketData.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AlpacaMapper {

@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.alpaca.AlpacaFacade;
-import pl.maropce.paperstock.alpaca.MarketStockSnapshot;
-import pl.maropce.paperstock.alpaca.MarketTopMover;
-import pl.maropce.paperstock.alpaca.MarketTopMovers;
 import pl.maropce.paperstock.candle.CandleApi;
 import pl.maropce.paperstock.candle.CandleDTO;
 import pl.maropce.paperstock.candle.Timeframe;
 import pl.maropce.paperstock.logodev.LogoService;
+import pl.maropce.paperstock.marketData.MarketDataApi;
+import pl.maropce.paperstock.marketData.MarketStockSnapshot;
+import pl.maropce.paperstock.marketData.MarketTopMover;
+import pl.maropce.paperstock.marketData.MarketTopMovers;
 import pl.maropce.paperstock.stock.StockDTO;
 import pl.maropce.paperstock.stock.StockSnapshotDTO;
 import pl.maropce.paperstock.stock.internal.dto.*;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StockService {
 
-    private final AlpacaFacade alpacaFacade;
+    private final MarketDataApi marketDataApi;
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
     private final LogoService logoService;
@@ -94,7 +94,7 @@ public class StockService {
 
     public List<StockMostActiveDTO> getMostActiveStocks(int top, int logoSize) {
 
-        List<String> symbols = alpacaFacade.getMostActiveStocks(top);
+        List<String> symbols = marketDataApi.getMostActiveStocks(top);
 
         Map<String, Stock> stocksBySymbol = stockRepository
                 .findAllBySymbolIn(symbols)
@@ -137,7 +137,7 @@ public class StockService {
 
     @Transactional
     public MarketMoversDTO getTopMovers(int top, int logoSize) {
-        MarketTopMovers marketMovers = alpacaFacade.getTopMarketMovers(top);
+        MarketTopMovers marketMovers = marketDataApi.getTopMarketMovers(top);
 
         List<StockMoverDTO> gainers = getMarketMovers(marketMovers.gainers(), logoSize);
         List<StockMoverDTO> losers = getMarketMovers(marketMovers.losers(), logoSize);
@@ -201,7 +201,7 @@ public class StockService {
 
         List<String> allBySymbols = stockRepository.findAllSymbols(symbols);
 
-        Map<String, MarketStockSnapshot> snapshots = alpacaFacade.getSnapshots(allBySymbols);
+        Map<String, MarketStockSnapshot> snapshots = marketDataApi.getSnapshots(allBySymbols);
 
         return snapshots.values().stream()
                 .map(snapshot -> {

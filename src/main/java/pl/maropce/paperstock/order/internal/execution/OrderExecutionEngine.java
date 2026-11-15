@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.maropce.paperstock.alpaca.AlpacaFacade;
-import pl.maropce.paperstock.alpaca.MarketQuote;
+import pl.maropce.paperstock.marketData.MarketDataApi;
+import pl.maropce.paperstock.marketData.MarketQuote;
 
 import pl.maropce.paperstock.order.internal.Order;
 import pl.maropce.paperstock.order.internal.OrderRepository;
@@ -28,7 +28,7 @@ public class OrderExecutionEngine {
     private final OrderRepository orderRepository;
     private final OrderExecutionService orderExecutionService;
     private final MarketClock marketClock;
-    private final AlpacaFacade alpacaFacade;
+    private final MarketDataApi marketDataApi;
 
     private static Instant lastWindowEnd;
 
@@ -55,11 +55,9 @@ public class OrderExecutionEngine {
                 .map(Order::getStockSymbol)
                 .collect(Collectors.toSet());
 
-
-        Map<String, List<MarketQuote>> quotes = alpacaFacade.getQuotes(symbols, start, end);
+        Map<String, List<MarketQuote>> quotes = marketDataApi.getQuotes(symbols, start, end);
 
         for (Order order : pendingOrders) {
-            //MarketQuote mq = new MarketQuote(BigDecimal.valueOf(100.0 + new Random().nextDouble() * 10.34), 0L, BigDecimal.valueOf(100.0 + new Random().nextDouble() * 10.0), 0, marketClock.now().minus(1, java.time.temporal.ChronoUnit.MINUTES));
             List<MarketQuote> marketQuotes = quotes.getOrDefault(order.getStockSymbol(), List.of());
             try {
                 orderExecutionService.tryExecuteOrder(order, marketQuotes);

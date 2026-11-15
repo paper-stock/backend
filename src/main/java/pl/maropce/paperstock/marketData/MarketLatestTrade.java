@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.marketData;
 
 import java.math.BigDecimal;
 import java.time.Instant;

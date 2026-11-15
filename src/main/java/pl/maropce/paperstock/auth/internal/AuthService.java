@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.maropce.paperstock.appUser.AppUserApi;
@@ -23,7 +22,6 @@ import pl.maropce.paperstock.jwt.TokenResponse;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
 
     private final JwtApi jwtApi;
     private final AppUserAccountApi appUserAccountApi;
@@ -40,11 +38,12 @@ public class AuthService {
 
         appUserAccountApi.createNewAccount(
                 request.email(),
-                passwordEncoder.encode(request.password()),
+                request.password(),
                 appUserDTO.id()
         );
     }
 
+    @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -63,6 +62,7 @@ public class AuthService {
         return new TokenResponse(accessToken, refreshToken);
     }
 
+    @Transactional
     public WhoAmIResponse whoami(AppUserDetails appUserDetails) {
 
         AppUserDTO appUser = appUserApi.findAppUserById(appUserDetails.getAppUserId());
@@ -75,6 +75,7 @@ public class AuthService {
         );
     }
 
+    @Transactional
     public void logout(LogoutRequest logoutRequest) {
         jwtApi.deleteRefreshToken(
                 logoutRequest.refreshToken()
@@ -91,6 +92,7 @@ public class AuthService {
         log.info("Password changed successfully for account: {}", appUserDetails.getId());
     }
 
+    @Transactional
     public TokenResponse refreshAccessToken(String refreshToken) {
         return jwtApi.refreshAccessToken(refreshToken);
     }
