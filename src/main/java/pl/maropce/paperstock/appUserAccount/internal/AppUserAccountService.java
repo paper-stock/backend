@@ -22,6 +22,24 @@ public class AppUserAccountService {
     private final AppUserAccountMapper appUserAccountMapper;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean existsByRoleAdmin() {
+        return appUserAccountRepository.existsByRole(Role.ADMIN);
+    }
+
+    public void createAdminAccount(CreateNewAccountRequest request) {
+
+        AppUserAccount adminAccount = AppUserAccount.builder()
+                .appUserId(request.appUserId())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .role(Role.ADMIN)
+                .enabled(true)
+                .build();
+
+        appUserAccountRepository.save(adminAccount);
+        log.info("Admin account created");
+    }
+
     public boolean existsByEmail(String email) {
         return appUserAccountRepository.existsByEmail(email);
     }
@@ -31,7 +49,7 @@ public class AppUserAccountService {
         AppUserAccount appUserAccount = AppUserAccount.builder()
                 .appUserId(request.appUserId())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .role(Role.USER)
                 .enabled(true)
                 .build();

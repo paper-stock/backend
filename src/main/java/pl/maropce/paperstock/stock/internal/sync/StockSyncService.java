@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.alpaca.AlpacaFacade;
+import pl.maropce.paperstock.marketData.MarketDataApi;
 import pl.maropce.paperstock.stock.internal.Stock;
 import pl.maropce.paperstock.stock.internal.StockRepository;
 
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public class StockSyncService {
 
     private final StockRepository stockRepository;
-    private final AlpacaFacade alpacaFacade;
+    private final MarketDataApi marketDataApi;
     private final StockSyncMapper stockSyncMapper;
 
     @Transactional
     public void syncStocks() {
-        log.info("Starting Alpaca assets synchronization");
+        log.info("Starting Market Data assets synchronization");
 
-        List<AssetData> assets = alpacaFacade.getAllAssets()
+        List<AssetData> assets = marketDataApi.getAllAssets()
                 .stream()
                 .map(stockSyncMapper::toAssetData)
                 .toList();

@@ -63,10 +63,11 @@ logging:
   pattern:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} [%thread] %clr(%-5level) %clr(%logger{20}){cyan} - %msg%n"
 
-default:
-  users:
-    initialize: false
-
+bootstrap:
+  admin:
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    initial-password: ${BOOTSTRAP_ADMIN_INITIAL_PASSWORD:}
+    
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081}
   allowed-methods:

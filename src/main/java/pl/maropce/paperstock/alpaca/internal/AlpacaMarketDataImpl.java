@@ -1,14 +1,12 @@
-package pl.maropce.paperstock.alpaca;
+package pl.maropce.paperstock.alpaca.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.maropce.paperstock.alpaca.internal.AlpacaMapper;
-import pl.maropce.paperstock.alpaca.internal.AlpacaMarketDataClient;
-import pl.maropce.paperstock.alpaca.internal.AlpacaTradingClient;
 import pl.maropce.paperstock.alpaca.response.AlpacaMostActiveStockResponse;
 import pl.maropce.paperstock.alpaca.response.AlpacaQuoteResponse;
 import pl.maropce.paperstock.alpaca.response.AlpacaStockSnapshotResponse;
 import pl.maropce.paperstock.alpaca.response.AlpacaTopMoversResponse;
+import pl.maropce.paperstock.marketData.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AlpacaFacade {
+public class AlpacaMarketDataImpl implements MarketDataApi {
 
     private final AlpacaMarketDataClient alpacaMarketDataClient;
     private final AlpacaTradingClient alpacaTradingClient;
