@@ -35,6 +35,7 @@ public class Deposit {
     @Column(unique = true)
     private String stripeSessionId;
 
+    @Column(unique = true)
     private String stripePaymentIntentId;
 
     @CreationTimestamp

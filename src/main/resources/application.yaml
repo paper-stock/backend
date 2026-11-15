@@ -37,10 +37,14 @@ jwt:
 stripe:
   api-key: ${STRIPE_API_KEY}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  connection-timeout: 5s
+  read-timeout: 30s
+  max-network-retries: 2
   session:
     success-url: ${STRIPE_SESSION_SUCCESS_URL:http://localhost:8080/deposit-success.html}
     cancel-url: ${STRIPE_SESSION_CANCEL_URL:http://localhost:8080/deposit-cancel.html}
     expiration: 30m # 30min - 24h
+    currency: usd
 
 alpaca:
   max-pages: 10

@@ -9,10 +9,6 @@ import java.util.UUID;
 
 public interface DepositRepository extends JpaRepository<Deposit, UUID> {
 
-    /**
-     * Locks the row until the transaction completes, preventing concurrent
-     * webhooks for the same session from simultaneously passing the status check.
-     */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Deposit> findWithLockByStripeSessionId(String stripeSessionId);
+    Optional<Deposit> findWithLockById(UUID id);
 }

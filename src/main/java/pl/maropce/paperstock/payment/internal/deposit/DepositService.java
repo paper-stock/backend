@@ -16,6 +16,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DepositService {
 
+    public static final String DEPOSIT_ID = "depositId";
+
     private final DepositRepository depositRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -42,8 +44,8 @@ public class DepositService {
     }
 
     @Transactional
-    public void handlePaid(Session session) {
-        Deposit deposit = findLocked(session.getId());
+    public void handlePaid(UUID id, Session session) {
+        Deposit deposit = findLocked(id);
 
         if (deposit.getStatus() == DepositStatus.COMPLETED) {
             log.info("Deposit {} already completed, ignoring duplicate event", deposit.getId());
@@ -67,6 +69,8 @@ public class DepositService {
         deposit.complete(session.getPaymentIntent());
         log.info("Deposit {} completed ({} {})", deposit.getId(), deposit.getAmount(), deposit.getCurrency());
 
+        depositRepository.save(deposit);
+
         eventPublisher.publishEvent(new FundsDeposited(
                 deposit.getId(),
                 deposit.getUserId(),
@@ -76,8 +80,8 @@ public class DepositService {
     }
 
     @Transactional
-    public void handleAsyncPaymentFailed(String sessionId) {
-        Deposit deposit = findLocked(sessionId);
+    public void handleAsyncPaymentFailed(UUID id) {
+        Deposit deposit = findLocked(id);
 
         if (deposit.getStatus() == DepositStatus.PENDING) {
             deposit.fail();
@@ -89,8 +93,8 @@ public class DepositService {
     }
 
     @Transactional
-    public void handleExpired(String sessionId) {
-        Deposit deposit = findLocked(sessionId);
+    public void handleExpired(UUID id) {
+        Deposit deposit = findLocked(id);
 
         if (deposit.getStatus() == DepositStatus.PENDING) {
             deposit.expire();
@@ -101,12 +105,12 @@ public class DepositService {
         }
     }
 
-    private Deposit findLocked(String sessionId) {
+    private Deposit findLocked(UUID id) {
         // Missing deposit is an unexpected state. Throw an exception to trigger a 500 response
         // and let Stripe retry the webhook. The failure will be visible in the Stripe Dashboard.
-        return depositRepository.findWithLockByStripeSessionId(sessionId)
+        return depositRepository.findWithLockById(id)
                 .orElseThrow(() -> new IllegalStateException(
-                        "No deposit found for Stripe session " + sessionId));
+                        "No deposit found for ID " + id));
     }
 
     private void verifySessionMatchesDeposit(Deposit deposit, Session session) {
@@ -115,7 +119,7 @@ public class DepositService {
             throw new IllegalStateException("Session " + session.getId() + " has no amount_total");
         }
 
-        BigDecimal paidAmount = BigDecimal.valueOf(amountTotal, 2); // grosze -> PLN
+        BigDecimal paidAmount = BigDecimal.valueOf(amountTotal, 2);
         boolean amountOk = paidAmount.compareTo(deposit.getAmount()) == 0;
         boolean currencyOk = deposit.getCurrency().equalsIgnoreCase(session.getCurrency());
         boolean userOk = deposit.getUserId().toString().equals(session.getClientReferenceId());

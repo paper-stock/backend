@@ -1,7 +1,9 @@
 package pl.maropce.paperstock.payment.internal;
 
+import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
+import com.stripe.net.RequestOptions;
 import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import pl.maropce.paperstock.payment.internal.deposit.Deposit;
 import pl.maropce.paperstock.payment.internal.deposit.DepositService;
 import pl.maropce.paperstock.payment.internal.dto.CheckoutSessionDTO;
 import pl.maropce.paperstock.payment.internal.dto.CreateCheckoutSessionRequest;
+import pl.maropce.paperstock.payment.internal.exception.PaymentProviderException;
 
 import java.time.Instant;
 import java.util.Map;
@@ -21,33 +24,34 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private static final String CURRENCY = "usd";
-
     private final StripeProperties stripeProperties;
     private final DepositService depositService;
+    private final StripeClient stripeClient;
 
     public CheckoutSessionDTO createCheckoutSession(AppUserDetails appUserDetails, CreateCheckoutSessionRequest request) {
 
-        Deposit deposit = depositService.createPending(appUserDetails.getAppUserId(), request.amount(), CURRENCY);
+        Deposit deposit = depositService.createPending(appUserDetails.getAppUserId(), request.amount(), stripeProperties.session().currency());
 
         Map<String, String> metadata = Map.of(
-                "depositId", deposit.getId().toString()
+                DepositService.DEPOSIT_ID, deposit.getId().toString()
         );
 
         SessionCreateParams params = createSessionParams(appUserDetails, request, metadata);
 
-        try {
-            Session session = Session.create(params);
+        RequestOptions requestOptions = RequestOptions.builder()
+                .setIdempotencyKey(deposit.getId().toString())
+                .build();
 
+        try {
+            Session session = stripeClient.v1().checkout().sessions().create(params, requestOptions);
             depositService.attachSession(deposit.getId(), session.getId());
             log.info("Checkout session created: {}", session.getId());
             return new CheckoutSessionDTO(session.getUrl());
         } catch (StripeException e) {
-            depositService.discard(deposit.getId());
             log.error("Error creating checkout session", e);
-            throw new RuntimeException(e);
+            depositService.discard(deposit.getId());
+            throw new PaymentProviderException();
         }
-
     }
 
     private SessionCreateParams createSessionParams(AppUserDetails appUserDetails, CreateCheckoutSessionRequest request, Map<String, String> metadata) {
@@ -72,7 +76,7 @@ public class PaymentService {
                                 .setQuantity(1L)
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency(CURRENCY)
+                                                .setCurrency(stripeProperties.session().currency())
                                                 .setUnitAmount(request.amount().longValue() * 100)
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
