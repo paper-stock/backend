@@ -3,10 +3,8 @@ package pl.maropce.paperstock.appUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import pl.maropce.paperstock.appUser.internal.AddFundsRequest;
 import pl.maropce.paperstock.appUser.internal.AppUserService;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
@@ -22,13 +20,5 @@ public class AppUserApi {
 
     public AppUserDTO findAppUserById(UUID appUserId) {
         return appUserService.findAppUserById(appUserId);
-    }
-
-    public void addFunds(UUID appUserId, BigDecimal amount) {
-        appUserService.addFunds(appUserId, new AddFundsRequest(amount));
-    }
-
-    public void payFunds(UUID appUserId, BigDecimal funds) {
-        appUserService.payFunds(appUserId, funds);
     }
 }

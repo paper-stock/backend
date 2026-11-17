@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.order.internal.dto.CancelOrderRequest;
 import pl.maropce.paperstock.order.internal.dto.OrderDTO;
 import pl.maropce.paperstock.order.internal.dto.OrderMapper;
@@ -14,6 +13,7 @@ import pl.maropce.paperstock.order.internal.exception.OrderNotFoundException;
 import pl.maropce.paperstock.position.PositionApi;
 import pl.maropce.paperstock.stock.StockApi;
 import pl.maropce.paperstock.stock.StockDTO;
+import pl.maropce.paperstock.wallet.WalletApi;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final StockApi stockApi;
     private final OrderValidator orderValidator;
-    private final AppUserApi appUserApi;
+    private final WalletApi walletApi;
     private final PositionApi positionApi;
 
     @Transactional
@@ -40,7 +40,7 @@ public class OrderService {
         orderValidator.validateOrder(appUserId, request, stockDTO);
 
         if (request.orderSide() == OrderSide.BUY) {
-            appUserApi.payFunds(appUserId, request.funds());
+            walletApi.withdraw(appUserId, request.funds());
         }
 
         if (request.orderSide() == OrderSide.SELL) {
@@ -81,7 +81,7 @@ public class OrderService {
 
         // Refund funds or release shares
         if (order.getOrderSide() == OrderSide.BUY && order.getReservedFunds() != null) {
-            appUserApi.addFunds(appUserId, order.getReservedFunds());
+            walletApi.deposit(appUserId, order.getReservedFunds());
         } else if (order.getOrderSide() == OrderSide.SELL && order.getReservedShares() != null) {
             positionApi.releaseReservedShares(appUserId, order.getStockId(), order.getReservedShares());
         }

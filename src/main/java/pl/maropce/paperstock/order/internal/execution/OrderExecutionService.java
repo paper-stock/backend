@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.marketData.MarketQuote;
 import pl.maropce.paperstock.order.internal.Order;
 import pl.maropce.paperstock.order.internal.OrderRepository;
 import pl.maropce.paperstock.order.internal.OrderStatus;
 import pl.maropce.paperstock.position.AddNewPositionRequest;
 import pl.maropce.paperstock.position.PositionApi;
+import pl.maropce.paperstock.wallet.WalletApi;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,7 +24,7 @@ public class OrderExecutionService {
     private static final int SHARE_SCALE = 9;
     private static final int FUNDS_SCALE = 2;
 
-    private final AppUserApi appUserApi;
+    private final WalletApi walletApi;
     private final OrderRepository orderRepository;
     private final PositionApi positionApi;
 
@@ -85,7 +85,7 @@ public class OrderExecutionService {
         order.setTriggeredAt(quote.timestamp());
 
         // Add the revenue to the user's portfolio
-        appUserApi.addFunds(order.getAppUserId(), revenue);
+        walletApi.deposit(order.getAppUserId(), revenue);
         positionApi.takeFromReservedShares(order.getAppUserId(), order.getStockId(), sharesToSell);
 
         log.debug("Sold position for order {}: user={}, stock={}, quantity={}, revenue={}", order.getId(), order.getAppUserId(), order.getStockSymbol(), sharesToSell, revenue);
@@ -112,7 +112,7 @@ public class OrderExecutionService {
 
         // If there is any refund, add it back to the user's funds
         if (refund.signum() > 0) {
-            appUserApi.addFunds(order.getAppUserId(), refund);
+            walletApi.deposit(order.getAppUserId(), refund);
         }
 
         log.debug("Adding new position for order {}: user={}, stock={}, quantity={}", order.getId(), order.getAppUserId(), order.getStockSymbol(), shares);

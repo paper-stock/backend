@@ -3,9 +3,9 @@ package pl.maropce.paperstock.payment;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record FundsDeposited(
+public record FundsDepositedEvent(
         UUID depositId,
-        UUID userId,
+        UUID appUserId,
         BigDecimal amount,
         String currency
 ) {
