@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.maropce.paperstock.payment.FundsDeposited;
+import pl.maropce.paperstock.payment.FundsDepositedEvent;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -71,7 +71,7 @@ public class DepositService {
 
         depositRepository.save(deposit);
 
-        eventPublisher.publishEvent(new FundsDeposited(
+        eventPublisher.publishEvent(new FundsDepositedEvent(
                 deposit.getId(),
                 deposit.getUserId(),
                 deposit.getAmount(),

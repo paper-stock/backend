@@ -1,4 +1,4 @@
-package pl.maropce.paperstock.appUser.internal;
+package pl.maropce.paperstock.wallet.internal.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

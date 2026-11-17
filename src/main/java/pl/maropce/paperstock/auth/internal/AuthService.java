@@ -2,6 +2,7 @@ package pl.maropce.paperstock.auth.internal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import pl.maropce.paperstock.appUser.AppUserApi;
 import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.appUserAccount.AppUserAccountApi;
 import pl.maropce.paperstock.appUserDetails.AppUserDetails;
+import pl.maropce.paperstock.auth.UserRegisteredEvent;
 import pl.maropce.paperstock.auth.internal.dto.*;
 import pl.maropce.paperstock.auth.internal.exception.AccountAlreadyExistsException;
 import pl.maropce.paperstock.jwt.JwtApi;
@@ -26,6 +28,7 @@ public class AuthService {
     private final JwtApi jwtApi;
     private final AppUserAccountApi appUserAccountApi;
     private final AppUserApi appUserApi;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void register(RegisterUserRequest request) {
@@ -41,6 +44,8 @@ public class AuthService {
                 request.password(),
                 appUserDTO.id()
         );
+
+        eventPublisher.publishEvent(new UserRegisteredEvent(appUserDTO.id(), request.email()));
     }
 
     @Transactional

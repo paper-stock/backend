@@ -2,8 +2,6 @@ package pl.maropce.paperstock.order.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.maropce.paperstock.appUser.AppUserApi;
-import pl.maropce.paperstock.appUser.AppUserDTO;
 import pl.maropce.paperstock.order.internal.dto.PlaceOrderRequest;
 import pl.maropce.paperstock.order.internal.exception.InactiveStockException;
 import pl.maropce.paperstock.order.internal.exception.InsufficientFundsException;
@@ -13,14 +11,16 @@ import pl.maropce.paperstock.position.PositionApi;
 import pl.maropce.paperstock.position.PositionDTO;
 import pl.maropce.paperstock.stock.StockDTO;
 import pl.maropce.paperstock.stock.StockStatus;
+import pl.maropce.paperstock.wallet.WalletApi;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class OrderValidator {
 
-    private final AppUserApi appUserApi;
+    private final WalletApi walletApi;
     private final PositionApi positionApi;
 
     public void validateOrder(UUID appUserId, PlaceOrderRequest request, StockDTO stockDTO) {
@@ -36,8 +36,8 @@ public class OrderValidator {
                 throw new InvalidOrderException("Funds must be provided for BUY order");
             }
             validateStockIsTradableForBuying(stockDTO);
-            AppUserDTO appUserDTO = appUserApi.findAppUserById(appUserId);
-            validateAppUserFunds(appUserDTO, request);
+
+            validateAppUserFunds(appUserId, request);
         }
 
         if (request.orderSide() == OrderSide.SELL) {
@@ -54,10 +54,12 @@ public class OrderValidator {
         }
     }
 
-    private void validateAppUserFunds(AppUserDTO appUserDTO, PlaceOrderRequest request) {
+    private void validateAppUserFunds(UUID appUserId, PlaceOrderRequest request) {
 
-        if (appUserDTO.funds().compareTo(request.funds()) < 0) {
-            throw new InsufficientFundsException(appUserDTO.id());
+        BigDecimal walletBalance = walletApi.getWalletBalance(appUserId);
+
+        if (walletBalance.compareTo(request.funds()) < 0) {
+            throw new InsufficientFundsException(appUserId);
         }
     }
 
